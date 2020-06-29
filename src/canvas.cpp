@@ -1,7 +1,7 @@
 #include "canvas.h"
 
 Canvas::Canvas(int width, int height) : width(width), height(height) {
-    pixels = new Color[width * height];
+    pixels = new Color[width * height] {Color(0, 0, 0)};
 }
 
 Canvas::~Canvas() {
