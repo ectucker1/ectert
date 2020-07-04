@@ -22,6 +22,18 @@ Matrix::~Matrix() {
     delete[] values;
 }
 
+Matrix::Matrix(const Matrix &other) : Matrix(other.size, other.values) {}
+
+Matrix& Matrix::operator=(const Matrix &other) {
+    if (this != &other) {
+        delete[] values;
+        size = other.size;
+        values = new float[size * size] {0};
+        std::copy(other.values, other.values + size * size, values);
+    }
+    return *this;
+}
+
 int Matrix::index(int row, int col) const {
     return col + row * size;
 }

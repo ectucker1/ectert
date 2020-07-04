@@ -15,7 +15,10 @@ public:
     explicit Matrix(int size);
     Matrix(int size, const float init[]);
     static Matrix identity();
+
     ~Matrix();
+    Matrix(const Matrix& other);
+    Matrix& operator=(const Matrix& other);
 
     void set(int row, int col, float value);
     float get(int row, int col) const;
