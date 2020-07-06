@@ -14,6 +14,9 @@ public:
     Color operator -(Color other) const;
     Color operator *(Color other) const;
 
+    Color operator *(float scalar) const;
+    Color operator /(float scalar) const;
+
     bool operator ==(Color other) const;
 
 };

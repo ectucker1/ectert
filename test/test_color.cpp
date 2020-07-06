@@ -33,3 +33,21 @@ TEST(ColorTest, MultiplyingColors) {
 
     EXPECT_EQ(c1 * c2, Color(0.9f, 0.2f, 0.04f));
 }
+
+TEST(ColorTest, MultiplyingScalar) {
+    Color c = Color(1, -2, 3);
+
+    EXPECT_EQ(c * 3.5f, Color(3.5f, -7.0f, 10.5f));
+}
+
+TEST(ColorTest, MultiplyingFraction) {
+    Color c = Color(1, -2, 3);
+
+    EXPECT_EQ(c * 0.5f, Color(0.5f, -1.0f, 1.5f));
+}
+
+TEST(ColorTest, DividingScalar) {
+    Color c = Color(1, -2, 3);
+
+    EXPECT_EQ(c / 2.0f, Color(0.5f, -1.0f, 1.5f));
+}

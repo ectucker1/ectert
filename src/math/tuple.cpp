@@ -61,6 +61,10 @@ Tuple Tuple::cross(Tuple other) const {
     return Tuple::vector(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
 }
 
+Tuple Tuple::reflect(Tuple normal) const {
+    return Tuple(x, y, z, w) - normal * 2 * dot(normal);
+}
+
 bool Tuple::operator ==(const Tuple other) const {
     return float_equal(x, other.x) && float_equal(y, other.y)
         && float_equal(z, other.z) && float_equal(w, other.w);

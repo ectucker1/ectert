@@ -4,6 +4,7 @@
 #include "demo/chapter_three.h"
 #include "demo/chapter_four.h"
 #include "demo/chapter_five.h"
+#include "demo/chapter_six.h"
 
 int main()
 {
@@ -11,6 +12,7 @@ int main()
 	//run_chapter_two();
 	//run_chapter_three();
 	//run_chapter_four();
-	run_chapter_five();
+	//run_chapter_five();
+	run_chapter_six();
 	return 0;
 }

@@ -92,7 +92,7 @@ TEST(TupleTest, MultiplyingFraction) {
     EXPECT_EQ(tuple * 0.5f, Tuple(0.5f, -1.0f, 1.5f, -2.0f));
 }
 
-TEST(TupleTest, DividingScalr) {
+TEST(TupleTest, DividingScalar) {
     Tuple tuple = Tuple(1, -2, 3, -4);
 
     EXPECT_EQ(tuple / 2.0f, Tuple(0.5f, -1.0f, 1.5f, -2.0f));
@@ -155,4 +155,18 @@ TEST(TupleTest, CrossProduct) {
 
     EXPECT_EQ(v1.cross(v2), Tuple::vector(-1, 2, -1));
     EXPECT_EQ(v2.cross(v1), Tuple::vector(1, -2, 1));
+}
+
+TEST(TupleTest, Reflect45) {
+    Tuple v = Tuple::vector(1, -1, 0);
+    Tuple n = Tuple::vector(0, 1, 0);
+
+    EXPECT_EQ(v.reflect(n), Tuple::vector(1, 1, 0));
+}
+
+TEST(TupleTest, ReflectSlanted) {
+    Tuple v = Tuple::vector(0, -1, 0);
+    Tuple n = Tuple::vector(M_SQRT2 / 2, M_SQRT2 / 2, 0);
+
+    EXPECT_EQ(v.reflect(n), Tuple::vector(1, 0, 0));
 }

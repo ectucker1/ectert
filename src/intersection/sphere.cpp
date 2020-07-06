@@ -1,7 +1,7 @@
 #include "sphere.h"
 #include <cmath>
 
-Sphere::Sphere() : transform(Matrix::identity()) {}
+Sphere::Sphere() : transform(Matrix::identity()), material(Material()) {}
 Sphere::Sphere(const Matrix& transform) : transform(transform) {}
 
 std::vector<Intersection> Sphere::intersect(Ray ray) {
@@ -22,6 +22,14 @@ std::vector<Intersection> Sphere::intersect(Ray ray) {
     }
 
     return intersection_list(results);
+}
+
+Tuple Sphere::normal_at(Tuple point) const {
+    Matrix inverse = transform.inverse();
+    point = inverse * point;
+    Tuple normal = inverse.transposed() * Tuple::vector(point.x, point.y, point.z);
+    normal.w = 0;
+    return normal.normalized();
 }
 
 bool Sphere::operator==(const Sphere &other) const {

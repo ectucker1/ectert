@@ -29,6 +29,8 @@ public:
     float dot(Tuple other) const;
     Tuple cross(Tuple other) const;
 
+    Tuple reflect(Tuple other) const;
+
     bool operator ==(Tuple other) const;
 
 };
