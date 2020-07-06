@@ -54,15 +54,17 @@ TEST(SphereTest, RayAfterSphere) {
 TEST(SphereTest, DefaultTransform) {
     Sphere sphere = Sphere();
 
-    EXPECT_EQ(sphere.transform, Matrix::identity());
+    EXPECT_EQ(sphere.transform(), Matrix::identity());
+    EXPECT_EQ(sphere.inverse(), Matrix::identity().inverse());
 }
 
 TEST(SphereTest, ChangingTransform) {
     Sphere sphere = Sphere();
     Matrix transform = translation(2, 3, 4);
 
-    sphere.transform = transform;
-    EXPECT_EQ(sphere.transform, transform);
+    sphere.transform(transform);
+    EXPECT_EQ(sphere.transform(), transform);
+    EXPECT_EQ(sphere.inverse(), transform.inverse());
 }
 
 TEST(SphereTest, IntersectingScaled) {
@@ -107,14 +109,14 @@ TEST(SphereTest, NormalIsNormalized) {
 
 TEST(SphereTest, NormalTranslated) {
     Sphere sphere = Sphere();
-    sphere.transform = translation(0, 1, 0);
+    sphere.transform(translation(0, 1, 0));
 
     EXPECT_EQ(sphere.normal_at(Tuple::point(0.0f, 1.70711f, -0.70711f)), Tuple::vector(0.0f, 0.70711f, -0.70711f));
 }
 
 TEST(SphereTest, NormalTransformed) {
     Sphere sphere = Sphere();
-    sphere.transform = scaling(1, 0.5f, 1) * rotation_z(M_PI / 5);
+    sphere.transform(scaling(1, 0.5f, 1) * rotation_z(M_PI / 5));
 
     EXPECT_EQ(sphere.normal_at(Tuple::point(0.0f, M_SQRT2 / 2, -M_SQRT2 / 2)), Tuple::vector(0, 0.97014f, -0.24254f));
 }

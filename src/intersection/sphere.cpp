@@ -1,11 +1,24 @@
 #include "sphere.h"
 #include <cmath>
 
-Sphere::Sphere() : transform(Matrix::identity()), material(Material()) {}
-Sphere::Sphere(const Matrix& transform) : transform(transform) {}
+Sphere::Sphere() : _transform(Matrix::identity()), _inverse(_transform.inverse()) {}
+Sphere::Sphere(const Matrix& transform) : _transform(transform), _inverse(_transform.inverse()) {}
+
+Matrix Sphere::transform() {
+    return _transform;
+}
+
+void Sphere::transform(const Matrix& trans) {
+    _transform = trans;
+    _inverse = trans.inverse();
+}
+
+Matrix Sphere::inverse() {
+    return _inverse;
+}
 
 std::vector<Intersection> Sphere::intersect(Ray ray) {
-    ray = ray.transform(transform.inverse());
+    ray = ray.transform(_inverse);
 
     Tuple sphereToRay = ray.origin - Tuple::point(0, 0, 0);
 
@@ -25,9 +38,8 @@ std::vector<Intersection> Sphere::intersect(Ray ray) {
 }
 
 Tuple Sphere::normal_at(Tuple point) const {
-    Matrix inverse = transform.inverse();
-    point = inverse * point;
-    Tuple normal = inverse.transposed() * Tuple::vector(point.x, point.y, point.z);
+    point = _inverse * point;
+    Tuple normal = _inverse.transposed() * Tuple::vector(point.x, point.y, point.z);
     normal.w = 0;
     return normal.normalized();
 }

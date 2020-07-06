@@ -10,17 +10,24 @@ class Intersection;
 class Sphere {
 
 public:
-    Matrix transform;
-
     Material material;
 
     Sphere();
     Sphere(const Matrix& transform);
+
+    Matrix transform();
+    void transform(const Matrix& trans);
+
+    Matrix inverse();
 
     std::vector<Intersection> intersect(Ray ray);
 
     Tuple normal_at(const Tuple point) const;
 
     bool operator ==(const Sphere& other) const;
+
+private:
+    Matrix _transform;
+    Matrix _inverse;
 
 };
