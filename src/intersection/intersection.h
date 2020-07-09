@@ -9,11 +9,11 @@ class Intersection {
 
 public:
     float t;
-    Sphere* object;
+    const Sphere* object;
 
     static const Intersection NIL;
 
-    Intersection(float t, Sphere* object);
+    Intersection(float t, const Sphere* object);
 
     bool operator ==(const Intersection& other) const;
 
@@ -21,6 +21,6 @@ public:
 
 };
 
-std::vector<Intersection> intersection_list(std::vector<Intersection>& values);
+std::vector<Intersection> sort_intersections(std::vector<Intersection>& values);
 
 Intersection hit(std::vector<Intersection>& list);

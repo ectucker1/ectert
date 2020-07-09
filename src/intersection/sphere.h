@@ -20,7 +20,7 @@ public:
 
     Matrix inverse();
 
-    std::vector<Intersection> intersect(Ray ray);
+    std::vector<Intersection> intersect(Ray ray) const;
 
     Tuple normal_at(const Tuple point) const;
 

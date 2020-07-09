@@ -54,3 +54,22 @@ Matrix shearing(float x_y, float x_z, float y_x, float y_z, float z_x, float z_y
     result.set(2, 1, z_y);
     return result;
 }
+
+Matrix view_transform(Tuple from, Tuple to, Tuple up) {
+    Tuple forward = (to - from).normalized();
+    Tuple left = forward.cross(up.normalized());
+    Tuple true_up = left.cross(forward);
+
+    Matrix orientation = Matrix::identity();
+    orientation.set(0, 0, left.x);
+    orientation.set(0, 1, left.y);
+    orientation.set(0, 2, left.z);
+    orientation.set(1, 0, true_up.x);
+    orientation.set(1, 1, true_up.y);
+    orientation.set(1, 2, true_up.z);
+    orientation.set(2, 0, -forward.x);
+    orientation.set(2, 1, -forward.y);
+    orientation.set(2, 2, -forward.z);
+
+    return orientation * translation(-from.x, -from.y, -from.z);
+}

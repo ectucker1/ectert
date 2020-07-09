@@ -9,6 +9,10 @@ public:
     Tuple position;
     Color intensity;
 
+    static const PointLight NIL;
+
     PointLight(Tuple position, Color intensity);
+
+    bool operator ==(const PointLight& other) const;
 
 };

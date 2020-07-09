@@ -34,7 +34,7 @@ void run_chapter_six() {
             ray.direction = (pos - ray.origin).normalized();
 
             std::vector<Intersection> xs = (sphere.intersect(ray));
-            intersection_list(xs);
+            sort_intersections(xs);
             Intersection hitPoint = hit(xs);
 
             if (!(Intersection::NIL == hitPoint)) {

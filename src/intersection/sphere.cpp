@@ -17,7 +17,7 @@ Matrix Sphere::inverse() {
     return _inverse;
 }
 
-std::vector<Intersection> Sphere::intersect(Ray ray) {
+std::vector<Intersection> Sphere::intersect(Ray ray) const {
     ray = ray.transform(_inverse);
 
     Tuple sphereToRay = ray.origin - Tuple::point(0, 0, 0);
@@ -34,7 +34,7 @@ std::vector<Intersection> Sphere::intersect(Ray ray) {
         results.emplace_back(Intersection((-b + std::sqrt(discriminant)) / (2 * a), this));
     }
 
-    return intersection_list(results);
+    return sort_intersections(results);
 }
 
 Tuple Sphere::normal_at(Tuple point) const {

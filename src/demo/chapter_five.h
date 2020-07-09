@@ -25,7 +25,7 @@ void run_chapter_five() {
 
             ray.direction = (pos - ray.origin).normalized();
             std::vector<Intersection> xs = (sphere.intersect(ray));
-            intersection_list(xs);
+            sort_intersections(xs);
 
             if (!(Intersection::NIL == hit(xs))) {
                 canvas.write_pixel(x, y, shadow);
