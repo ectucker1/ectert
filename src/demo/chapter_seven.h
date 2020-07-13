@@ -48,7 +48,8 @@ void run_chapter_seven() {
     world.objects.push_back(right);
     world.objects.push_back(left);
 
-    world.light = PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
+    world.lights.emplace_back(Tuple::point(-10, 10, -10), Color(0.8, 0.8, 0.8));
+    world.lights.emplace_back(Tuple::point(10, 10, -10), Color(0.2, 0.2, 0.2));
 
     Camera cam = Camera(1024, 512, M_PI / 3);
     cam.transform(view_transform(Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));

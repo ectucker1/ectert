@@ -7,7 +7,7 @@ TEST(WorldTest, CreatingWorld) {
     World world = World();
 
     EXPECT_EQ(world.objects.size(), 0);
-    EXPECT_EQ(world.light, PointLight::NIL);
+    EXPECT_EQ(world.lights.size(), 0);
 }
 
 TEST(WorldTest, ExampleWorld) {
@@ -19,7 +19,7 @@ TEST(WorldTest, ExampleWorld) {
     Sphere s2 = Sphere(scaling(0.5, 0.5, 0.5));
 
     World world = World::example_world();
-    EXPECT_EQ(world.light, light);
+    EXPECT_EQ(world.lights.front(), light);
     EXPECT_EQ(world.objects.size(), 2);
     EXPECT_NE(std::find(world.objects.begin(), world.objects.end(), s1), world.objects.end());
     EXPECT_NE(std::find(world.objects.begin(), world.objects.end(), s2), world.objects.end());
@@ -64,33 +64,33 @@ TEST(WorldTest, NoShadowNothingCollinear) {
     World world = World::example_world();
     Tuple point = Tuple::point(0, 10, 0);
 
-    EXPECT_FALSE(world.is_shadowed(point));
+    EXPECT_FALSE(world.is_shadowed(point, world.lights.front()));
 }
 
 TEST(WorldTest, ShadowObjectBetween) {
     World world = World::example_world();
     Tuple point = Tuple::point(10, -10, 10);
 
-    EXPECT_TRUE(world.is_shadowed(point));
+    EXPECT_TRUE(world.is_shadowed(point, world.lights.front()));
 }
 
 TEST(WorldTest, NoShadowObjectBehindLight) {
     World world = World::example_world();
     Tuple point = Tuple::point(-20, 20, -20);
 
-    EXPECT_FALSE(world.is_shadowed(point));
+    EXPECT_FALSE(world.is_shadowed(point, world.lights.front()));
 }
 
 TEST(WorldTest, NoShadowObjectBehindPoint) {
     World world = World::example_world();
     Tuple point = Tuple::point(-2, 2, -2);
 
-    EXPECT_FALSE(world.is_shadowed(point));
+    EXPECT_FALSE(world.is_shadowed(point, world.lights.front()));
 }
 
 TEST(WorldTest, ShadeHitInShadow) {
     World world = World();
-    world.light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
+    world.lights.emplace_back(Tuple::point(0, 0, -10), Color(1, 1, 1));
     Sphere s1 = Sphere();
     world.objects.push_back(s1);
     Sphere s2 = Sphere(translation(0, 0, 10));

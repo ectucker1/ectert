@@ -10,14 +10,14 @@ class World {
 
 public:
     std::vector<Sphere> objects;
-    PointLight light;
+    std::vector<PointLight> lights;
 
     World();
     static World example_world();
 
     std::vector<Intersection> intersect(const Ray& ray) const;
 
-    bool is_shadowed(const Tuple& point) const;
+    bool is_shadowed(const Tuple& point, const PointLight &light) const;
 
     Color shade_hit(const Hit& hit) const;
 

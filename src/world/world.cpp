@@ -2,13 +2,13 @@
 
 #include "math/transform.h"
 
-World::World() : light(PointLight::NIL), objects(std::vector<Sphere>()) {}
+World::World() : lights(std::vector<PointLight>()), objects(std::vector<Sphere>()) {}
 
 World World::example_world() {
     World world = World();
 
     PointLight light = PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
-    world.light = light;
+    world.lights.push_back(light);
 
     Sphere s1 = Sphere();
     s1.material.color = Color(0.8, 1.0, 0.6);
@@ -31,7 +31,7 @@ std::vector<Intersection> World::intersect(const Ray& ray) const {
     return sort_intersections(worldXS);
 }
 
-bool World::is_shadowed(const Tuple &point) const {
+bool World::is_shadowed(const Tuple &point, const PointLight &light) const {
     Tuple vec = light.position - point;
 
     float dist = vec.magnitude_sq();
@@ -46,10 +46,12 @@ bool World::is_shadowed(const Tuple &point) const {
 
 Color World::shade_hit(const Hit &hit) const {
     // TODO: Multiple light sources
-
-    bool shadowed = is_shadowed(hit.over_point);
-
-    return hit.object->material.lighting(light, hit.point, hit.eyev, hit.normalv, shadowed);
+    Color total = Color();
+    for (PointLight light : lights) {
+        bool shadowed = is_shadowed(hit.over_point, light);
+        total = total + hit.object->material.lighting(light, hit.point, hit.eyev, hit.normalv, shadowed);
+    }
+    return total;
 }
 
 Color World::color_at(const Ray &ray) const {
