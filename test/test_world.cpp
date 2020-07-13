@@ -59,3 +59,46 @@ TEST(WorldTest, ColorBehind) {
 
     EXPECT_EQ(world.color_at(ray), world.objects[1].material.color);
 }
+
+TEST(WorldTest, NoShadowNothingCollinear) {
+    World world = World::example_world();
+    Tuple point = Tuple::point(0, 10, 0);
+
+    EXPECT_FALSE(world.is_shadowed(point));
+}
+
+TEST(WorldTest, ShadowObjectBetween) {
+    World world = World::example_world();
+    Tuple point = Tuple::point(10, -10, 10);
+
+    EXPECT_TRUE(world.is_shadowed(point));
+}
+
+TEST(WorldTest, NoShadowObjectBehindLight) {
+    World world = World::example_world();
+    Tuple point = Tuple::point(-20, 20, -20);
+
+    EXPECT_FALSE(world.is_shadowed(point));
+}
+
+TEST(WorldTest, NoShadowObjectBehindPoint) {
+    World world = World::example_world();
+    Tuple point = Tuple::point(-2, 2, -2);
+
+    EXPECT_FALSE(world.is_shadowed(point));
+}
+
+TEST(WorldTest, ShadeHitInShadow) {
+    World world = World();
+    world.light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
+    Sphere s1 = Sphere();
+    world.objects.push_back(s1);
+    Sphere s2 = Sphere(translation(0, 0, 10));
+    world.objects.push_back(s2);
+    Ray ray = Ray(Tuple::point(0, 0, 5), Tuple::vector(0, 0, 1));
+    Intersection x = Intersection(4, &s2);
+    Hit hit = Hit(x, ray);
+
+    Color color = world.shade_hit(hit);
+    EXPECT_EQ(color, Color(0.1, 0.1, 0.1));
+}

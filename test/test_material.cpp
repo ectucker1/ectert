@@ -19,7 +19,7 @@ TEST(MaterialTest, LightingEyeLightDirect) {
     Tuple normalv = Tuple::vector(0, 0, -1);
     PointLight light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-    EXPECT_EQ(mat.lighting(light, position, eyev, normalv), Color(1.9f, 1.9f, 1.9f));
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, false), Color(1.9f, 1.9f, 1.9f));
 }
 
 TEST(MaterialTest, LightingEye45) {
@@ -29,7 +29,7 @@ TEST(MaterialTest, LightingEye45) {
     Tuple normalv = Tuple::vector(0, 0, -1);
     PointLight light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
 
-    EXPECT_EQ(mat.lighting(light, position, eyev, normalv), Color(1.0f, 1.0f, 1.0f));
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, false), Color(1.0f, 1.0f, 1.0f));
 }
 
 TEST(MaterialTest, LightingLight45) {
@@ -39,7 +39,7 @@ TEST(MaterialTest, LightingLight45) {
     Tuple normalv = Tuple::vector(0, 0, -1);
     PointLight light = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-    EXPECT_EQ(mat.lighting(light, position, eyev, normalv), Color(0.7364f, 0.7364f, 0.7364f));
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, false), Color(0.7364f, 0.7364f, 0.7364f));
 }
 
 TEST(MaterialTest, LightingEyeLightOpposite45) {
@@ -49,7 +49,7 @@ TEST(MaterialTest, LightingEyeLightOpposite45) {
     Tuple normalv = Tuple::vector(0, 0, -1);
     PointLight light = PointLight(Tuple::point(0, 10, -10), Color(1, 1, 1));
 
-    EXPECT_EQ(mat.lighting(light, position, eyev, normalv), Color(1.6364f, 1.6364f, 1.6364f));
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, false), Color(1.6364f, 1.6364f, 1.6364f));
 }
 
 TEST(MaterialTest, LightingLightBehind) {
@@ -59,5 +59,16 @@ TEST(MaterialTest, LightingLightBehind) {
     Tuple normalv = Tuple::vector(0, 0, -1);
     PointLight light = PointLight(Tuple::point(0, 0, 10), Color(1, 1, 1));
 
-    EXPECT_EQ(mat.lighting(light, position, eyev, normalv), Color(0.1f, 0.1f, 0.1f));
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, false), Color(0.1f, 0.1f, 0.1f));
+}
+
+TEST(MaterialTest, LightingInShadow) {
+    Material mat = Material();
+    Tuple position = Tuple::point(0, 0, 0);
+    Tuple eyev = Tuple::vector(0, 0, -1);
+    Tuple normalv = Tuple::vector(0, 0, -1);
+    PointLight light = PointLight(Tuple::point(0, 0, -10), Color(1, 1, 1));
+    bool in_shadow = true;
+
+    EXPECT_EQ(mat.lighting(light, position, eyev, normalv, in_shadow), Color(0.1f, 0.1f, 0.1f));
 }

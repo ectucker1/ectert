@@ -15,7 +15,7 @@ bool Material::operator==(const Material &other) const {
         && specular == other.specular && shininess == other.shininess;
 }
 
-Color Material::lighting(const PointLight &light, const Tuple &position, const Tuple &eyev, const Tuple &normal) const {
+Color Material::lighting(const PointLight &light, const Tuple &position, const Tuple &eyev, const Tuple &normal, bool in_shadow) const {
     // Phong reflection model
 
     // Combine surface and light color
@@ -27,29 +27,29 @@ Color Material::lighting(const PointLight &light, const Tuple &position, const T
     // Ambient contribution
     Color ambientColor = effectiveColor * ambient;
 
-    Color diffuseColor;
-    Color specularColor;
+    Color diffuseColor = Color();
+    Color specularColor = Color();
 
-    // Cosine of angle between light and normal vector
-    // Negative number means light is on other side
-    float lightDotNormal = lightv.dot(normal);
-    if (lightDotNormal < 0) {
-        diffuseColor = Color();
-        specularColor = Color();
-    } else {
-        // Diffuse contribution
-        diffuseColor = effectiveColor * diffuse * lightDotNormal;
+    // Don't include specular and diffuse if not in shadow
+    if (!in_shadow) {
+        // Cosine of angle between light and normal vector
+        // Negative number means light is on other side
+        float lightDotNormal = lightv.dot(normal);
+        if (lightDotNormal >= 0) {
+            // Diffuse contribution
+            diffuseColor = effectiveColor * diffuse * lightDotNormal;
 
-        Tuple reflectv = (-lightv).reflect(normal);
-        // Cosine of angle between reflection and eye vector
-        // Negative number means reflection away from eye
-        float reflectDotEye = reflectv.dot(eyev);
+            Tuple reflectv = (-lightv).reflect(normal);
+            // Cosine of angle between reflection and eye vector
+            // Negative number means reflection away from eye
+            float reflectDotEye = reflectv.dot(eyev);
 
-        if (reflectDotEye <= 0) {
-            specularColor = Color();
-        } else {
-            float factor = std::pow(reflectDotEye, shininess);
-            specularColor = light.intensity * specular * factor;
+            if (reflectDotEye <= 0) {
+                specularColor = Color();
+            } else {
+                float factor = std::pow(reflectDotEye, shininess);
+                specularColor = light.intensity * specular * factor;
+            }
         }
     }
 

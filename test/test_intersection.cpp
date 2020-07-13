@@ -2,6 +2,7 @@
 #include "intersection/intersection.h"
 #include "intersection/sphere.h"
 #include "intersection/hit.h"
+#include "math/transform.h"
 
 TEST(IntersectionTest, CreatingIntersection) {
     Sphere s = Sphere();
@@ -91,4 +92,15 @@ TEST(IntersectionTest, PrecomputeHitDataInside) {
     EXPECT_EQ(hit.eyev, Tuple::vector(0, 0, -1));
     EXPECT_EQ(hit.normalv, Tuple::vector(0, 0, -1));
     EXPECT_TRUE(hit.inside);
+}
+
+TEST(IntersectionTest, HitOffsetPoint) {
+    Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+    Sphere s = Sphere(translation(0, 0, 1));
+    std::vector<Intersection> xs = s.intersect(ray);
+    Intersection x = hit(xs);
+
+    Hit hit = Hit(x, ray);
+    EXPECT_LT(hit.over_point.z, -0.01 / 2);
+    EXPECT_GT(hit.point.z, hit.over_point.z);
 }

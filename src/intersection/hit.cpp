@@ -12,4 +12,6 @@ Hit::Hit(const Intersection &intersection, const Ray &ray) {
         inside = true;
         normalv = -normalv;
     }
+
+    over_point = point + normalv * 0.01;
 }

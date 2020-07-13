@@ -42,7 +42,7 @@ void run_chapter_six() {
                 Tuple normal = sphere.normal_at(point);
                 Tuple eye = -ray.direction;
 
-                Color color = sphere.material.lighting(light, point, eye, normal);
+                Color color = sphere.material.lighting(light, point, eye, normal, false);
 
                 canvas.write_pixel(x, y, color);
             }

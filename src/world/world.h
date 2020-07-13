@@ -17,6 +17,8 @@ public:
 
     std::vector<Intersection> intersect(const Ray& ray) const;
 
+    bool is_shadowed(const Tuple& point) const;
+
     Color shade_hit(const Hit& hit) const;
 
     Color color_at(const Ray& ray) const;

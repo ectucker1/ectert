@@ -31,9 +31,25 @@ std::vector<Intersection> World::intersect(const Ray& ray) const {
     return sort_intersections(worldXS);
 }
 
+bool World::is_shadowed(const Tuple &point) const {
+    Tuple vec = light.position - point;
+
+    float dist = vec.magnitude_sq();
+    Tuple dir = vec.normalized();
+
+    Ray ray = Ray(point, dir);
+    std::vector<Intersection> xs = intersect(ray);
+    Intersection x = hit(xs);
+
+    return !(x == Intersection::NIL) && x.t * x.t < dist;
+}
+
 Color World::shade_hit(const Hit &hit) const {
     // TODO: Multiple light sources
-    return hit.object->material.lighting(light, hit.point, hit.eyev, hit.normalv);
+
+    bool shadowed = is_shadowed(hit.over_point);
+
+    return hit.object->material.lighting(light, hit.point, hit.eyev, hit.normalv, shadowed);
 }
 
 Color World::color_at(const Ray &ray) const {
