@@ -1,6 +1,6 @@
 #pragma once
 
-#include "intersection/sphere.h"
+#include "shapes/sphere.h"
 #include "intersection/intersection.h"
 #include "canvas.h"
 #include "files/ppm.h"

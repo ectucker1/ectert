@@ -1,19 +1,19 @@
 #pragma once
 
-class Sphere;
+class Shape;
 
 #include <vector>
-#include "sphere.h"
+#include "shapes/shape.h"
 
 class Intersection {
 
 public:
     float t;
-    const Sphere* object;
+    const Shape* object;
 
     static const Intersection NIL;
 
-    Intersection(float t, const Sphere* object);
+    Intersection(float t, const Shape* object);
 
     bool operator ==(const Intersection& other) const;
 

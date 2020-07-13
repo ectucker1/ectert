@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 
-Intersection::Intersection(float t, const Sphere* object) : t(t), object(object) {}
+Intersection::Intersection(float t, const Shape* object) : t(t), object(object) {}
 
 const Intersection Intersection::NIL = Intersection(-INFINITY, nullptr);
 

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "intersection/intersection.h"
-#include "intersection/sphere.h"
+#include "shapes/sphere.h"
 #include "intersection/hit.h"
 #include "math/transform.h"
 

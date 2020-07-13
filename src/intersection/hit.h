@@ -1,13 +1,13 @@
 #pragma once
 
 #include "math/tuple.h"
-#include "sphere.h"
+#include "shapes/shape.h"
 
 class Hit {
 
 public:
     float t;
-    const Sphere* object = nullptr;
+    const Shape* object = nullptr;
 
     Tuple point = Tuple::point(0, 0, 0);
     Tuple eyev = Tuple::vector(0, 0, 0);

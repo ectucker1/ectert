@@ -1,6 +1,6 @@
 #pragma once
 
-#include "intersection/sphere.h"
+#include "shapes/sphere.h"
 #include "intersection/intersection.h"
 #include "math/transform.h"
 #include "canvas.h"
