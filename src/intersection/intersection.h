@@ -2,18 +2,19 @@
 
 class Shape;
 
-#include <vector>
 #include "shapes/shape.h"
+#include <vector>
+#include <memory>
 
 class Intersection {
 
 public:
     float t;
-    const Shape* object;
+    std::shared_ptr<const Shape> object;
 
     static const Intersection NIL;
 
-    Intersection(float t, const Shape* object);
+    Intersection(float t, const std::shared_ptr<const Shape> object);
 
     bool operator ==(const Intersection& other) const;
 

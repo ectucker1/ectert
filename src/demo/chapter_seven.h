@@ -41,12 +41,12 @@ void run_chapter_seven() {
     Sphere right = Sphere(translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5));
     right.material = rightMaterial;
 
-    world.objects.push_back(floor);
-    world.objects.push_back(leftWall);
-    world.objects.push_back(rightWall);
-    world.objects.push_back(center);
-    world.objects.push_back(right);
-    world.objects.push_back(left);
+    world.objects.push_back(std::shared_ptr<Shape>(&floor));
+    world.objects.push_back(std::shared_ptr<Shape>(&leftWall));
+    world.objects.push_back(std::shared_ptr<Shape>(&rightWall));
+    world.objects.push_back(std::shared_ptr<Shape>(&center));
+    world.objects.push_back(std::shared_ptr<Shape>(&right));
+    world.objects.push_back(std::shared_ptr<Shape>(&left));
 
     world.lights.emplace_back(Tuple::point(-10, 10, -10), Color(0.8, 0.8, 0.8));
     world.lights.emplace_back(Tuple::point(10, 10, -10), Color(0.2, 0.2, 0.2));

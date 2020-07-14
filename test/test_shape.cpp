@@ -21,17 +21,17 @@ TEST(ShapeTest, ChangingTransform) {
 
 TEST(ShapeTest, IntersectingScaled) {
     Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
-    TestShape shape = TestShape(scaling(2, 2, 2));
+    auto shape = std::make_shared<TestShape>(scaling(2, 2, 2));
 
-    std::vector<Intersection> results = shape.intersect(ray);
+    std::vector<Intersection> results = shape->intersect(ray);
     // TODO figure out a way to test this without sacrificing const
 }
 
 TEST(ShapeTest, IntersectingTranslated) {
     Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
-    TestShape shape = TestShape(translation(5, 0, 0));
+    auto shape = std::make_shared<TestShape>(translation(5, 0, 0));
 
-    std::vector<Intersection> results = shape.intersect(ray);
+    std::vector<Intersection> results = shape->intersect(ray);
     // TODO figure out a way to test this without sacrificing const
 }
 

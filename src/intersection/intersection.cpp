@@ -2,9 +2,9 @@
 #include <cmath>
 #include <algorithm>
 
-Intersection::Intersection(float t, const Shape* object) : t(t), object(object) {}
+Intersection::Intersection(float t, const std::shared_ptr<const Shape> object) : t(t), object(object) {}
 
-const Intersection Intersection::NIL = Intersection(-INFINITY, nullptr);
+const Intersection Intersection::NIL = Intersection(-INFINITY, std::shared_ptr<Shape>());
 
 bool Intersection::operator==(const Intersection &other) const {
     return t == other.t && object == other.object;

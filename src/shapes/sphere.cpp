@@ -15,8 +15,8 @@ std::vector<Intersection> Sphere::local_intersect(const Ray &local_ray) const {
 
     std::vector<Intersection> results = std::vector<Intersection>();
     if (discriminant >= 0) {
-        results.emplace_back(Intersection((-b - std::sqrt(discriminant)) / (2 * a), this));
-        results.emplace_back(Intersection((-b + std::sqrt(discriminant)) / (2 * a), this));
+        results.emplace_back(Intersection((-b - std::sqrt(discriminant)) / (2 * a), shared_from_this()));
+        results.emplace_back(Intersection((-b + std::sqrt(discriminant)) / (2 * a), shared_from_this()));
     }
 
     return sort_intersections(results);

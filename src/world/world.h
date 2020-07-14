@@ -5,11 +5,12 @@
 #include "intersection/intersection.h"
 #include "intersection/hit.h"
 #include <vector>
+#include <memory>
 
 class World {
 
 public:
-    std::vector<Sphere> objects;
+    std::vector<std::shared_ptr<Shape>> objects;
     std::vector<PointLight> lights;
 
     World();

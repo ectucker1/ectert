@@ -2,13 +2,11 @@
 
 #include "shape.h"
 
-class Sphere : public Shape {
+class Plane : public Shape {
 
 public:
-    Sphere();
-    Sphere(const Matrix& transform);
-
-    bool operator ==(const Sphere& other) const;
+    Plane();
+    Plane(const Matrix& transform);
 
 private:
     std::vector<Intersection> local_intersect(const Ray& local_ray) const override;

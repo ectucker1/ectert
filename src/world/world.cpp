@@ -2,7 +2,7 @@
 
 #include "math/transform.h"
 
-World::World() : lights(std::vector<PointLight>()), objects(std::vector<Sphere>()) {}
+World::World() : lights(std::vector<PointLight>()), objects(std::vector<std::shared_ptr<Shape>>()) {}
 
 World World::example_world() {
     World world = World();
@@ -10,13 +10,13 @@ World World::example_world() {
     PointLight light = PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
     world.lights.push_back(light);
 
-    Sphere s1 = Sphere();
-    s1.material.color = Color(0.8, 1.0, 0.6);
-    s1.material.diffuse = 0.7;
-    s1.material.specular = 0.2;
+    auto s1 = std::make_shared<Sphere>();
+    s1->material.color = Color(0.8, 1.0, 0.6);
+    s1->material.diffuse = 0.7;
+    s1->material.specular = 0.2;
     world.objects.push_back(s1);
 
-    Sphere s2 = Sphere(scaling(0.5, 0.5, 0.5));
+    auto s2 = std::make_shared<Sphere>(scaling(0.5, 0.5, 0.5));
     world.objects.push_back(s2);
 
     return world;
@@ -24,8 +24,8 @@ World World::example_world() {
 
 std::vector<Intersection> World::intersect(const Ray& ray) const {
     std::vector<Intersection> worldXS = std::vector<Intersection>();
-    for (const Sphere& object : objects) {
-        std::vector<Intersection> objectXS = object.intersect(ray);
+    for (const std::shared_ptr<Shape> object : objects) {
+        std::vector<Intersection> objectXS = object->intersect(ray);
         worldXS.insert(worldXS.begin(), objectXS.begin(), objectXS.end());
     }
     return sort_intersections(worldXS);
@@ -45,7 +45,6 @@ bool World::is_shadowed(const Tuple &point, const PointLight &light) const {
 }
 
 Color World::shade_hit(const Hit &hit) const {
-    // TODO: Multiple light sources
     Color total = Color();
     for (PointLight light : lights) {
         bool shadowed = is_shadowed(hit.over_point, light);

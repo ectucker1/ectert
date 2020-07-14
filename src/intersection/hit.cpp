@@ -1,8 +1,7 @@
 #include "hit.h"
 
-Hit::Hit(const Intersection &intersection, const Ray &ray) {
+Hit::Hit(const Intersection &intersection, const Ray &ray) : object(intersection.object) {
     t = intersection.t;
-    object = intersection.object;
 
     point = ray.position(t);
     eyev = -ray.direction;

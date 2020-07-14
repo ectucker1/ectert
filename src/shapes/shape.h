@@ -6,8 +6,9 @@ class Intersection;
 #include "intersection/intersection.h"
 #include "light/material.h"
 #include <vector>
+#include <memory>
 
-class Shape {
+class Shape : public std::enable_shared_from_this<Shape> {
 
 public:
     Material material;

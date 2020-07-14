@@ -6,6 +6,7 @@
 #include "demo/chapter_five.h"
 #include "demo/chapter_six.h"
 #include "demo/chapter_seven.h"
+#include "demo/chapter_nine.h"
 
 int main()
 {
@@ -15,6 +16,7 @@ int main()
 	//run_chapter_four();
 	//run_chapter_five();
 	//run_chapter_six();
-	run_chapter_seven();
+	//run_chapter_seven();
+	run_chapter_nine();
 	return 0;
 }

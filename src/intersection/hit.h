@@ -7,7 +7,7 @@ class Hit {
 
 public:
     float t;
-    const Shape* object = nullptr;
+    const std::shared_ptr<const Shape> object;
 
     Tuple point = Tuple::point(0, 0, 0);
     Tuple eyev = Tuple::vector(0, 0, 0);
