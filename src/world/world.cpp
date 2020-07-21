@@ -48,7 +48,7 @@ Color World::shade_hit(const Hit &hit) const {
     Color total = Color();
     for (PointLight light : lights) {
         bool shadowed = is_shadowed(hit.over_point, light);
-        total = total + hit.object->material.lighting(light, hit.point, hit.eyev, hit.normalv, shadowed);
+        total = total + hit.object->material.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
     }
     return total;
 }

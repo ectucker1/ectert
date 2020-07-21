@@ -3,6 +3,7 @@
 #include <cmath>
 
 Material::Material() {
+    pattern = nullptr;
     color = Color(1, 1, 1);
     ambient = 0.1;
     diffuse = 0.9;
@@ -15,11 +16,19 @@ bool Material::operator==(const Material &other) const {
         && specular == other.specular && shininess == other.shininess;
 }
 
-Color Material::lighting(const PointLight &light, const Tuple &position, const Tuple &eyev, const Tuple &normal, bool in_shadow) const {
+Color Material::lighting(const std::shared_ptr<const Shape>& shape, const PointLight &light, const Tuple &position, const Tuple &eyev, const Tuple &normal, bool in_shadow) const {
     // Phong reflection model
 
+    // Choose pattern or base color
+    Color sampleColor;
+    if (pattern == nullptr) {
+        sampleColor = color;
+    } else {
+        sampleColor = pattern->sample_shape(shape, position);
+    }
+
     // Combine surface and light color
-    Color effectiveColor = color * light.intensity;
+    Color effectiveColor = sampleColor * light.intensity;
 
     // Direction to light source
     Tuple lightv = (light.position - position).normalized();

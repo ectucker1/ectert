@@ -19,6 +19,9 @@ public:
 
     bool operator ==(Color other) const;
 
+    static const Color black;
+    static const Color white;
+
 };
 
 std::ostream& operator <<(std::ostream& stream, const Color& tuple);

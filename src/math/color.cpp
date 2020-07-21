@@ -33,3 +33,7 @@ std::ostream& operator <<(std::ostream &stream, const Color& color) {
     stream << "<" << color.r << ", " << color.g << ", " << color.b << ">";
     return stream;
 }
+
+const Color Color::black = Color(0, 0, 0);
+
+const Color Color::white = Color(1, 1, 1);
