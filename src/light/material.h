@@ -15,6 +15,7 @@ public:
     float diffuse;
     float specular;
     float shininess;
+    float reflectivity;
 
     Material();
 

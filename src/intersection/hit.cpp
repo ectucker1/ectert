@@ -12,5 +12,7 @@ Hit::Hit(const Intersection &intersection, const Ray &ray) : object(intersection
         normalv = -normalv;
     }
 
+    reflectv = ray.direction.reflect(normalv);
+
     over_point = point + normalv * 0.01;
 }

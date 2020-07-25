@@ -13,6 +13,7 @@ TEST(MaterialTest, DefaultMaterial) {
     EXPECT_FLOAT_EQ(mat.diffuse, 0.9);
     EXPECT_FLOAT_EQ(mat.specular, 0.9);
     EXPECT_FLOAT_EQ(mat.shininess, 200.0);
+    EXPECT_FLOAT_EQ(mat.reflectivity, 0.0);
 }
 
 TEST(MaterialTest, LightingEyeLightDirect) {

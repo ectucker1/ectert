@@ -1,7 +1,9 @@
 #include "gtest/gtest.h"
 #include "world/world.h"
 #include "math/transform.h"
+#include "shapes/plane.h"
 #include <algorithm>
+#include <cmath>
 
 TEST(WorldTest, CreatingWorld) {
     World world = World();
@@ -41,14 +43,14 @@ TEST(WorldTest, ColorMiss) {
     World world = World::example_world();
     Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 1, 0));
 
-    EXPECT_EQ(world.color_at(ray), Color(0, 0, 0));
+    EXPECT_EQ(world.color_at(ray, 0), Color(0, 0, 0));
 }
 
 TEST(WorldTest, ColorHit) {
     World world = World::example_world();
     Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
 
-    EXPECT_EQ(world.color_at(ray), Color(0.38066, 0.47583, 0.2855));
+    EXPECT_EQ(world.color_at(ray, 0), Color(0.38066, 0.47583, 0.2855));
 }
 
 TEST(WorldTest, ColorBehind) {
@@ -57,7 +59,7 @@ TEST(WorldTest, ColorBehind) {
     world.objects[1]->material.ambient = 1;
     Ray ray = Ray(Tuple::point(0, 0, 0.75), Tuple::vector(0, 0, -1));
 
-    EXPECT_EQ(world.color_at(ray), world.objects[1]->material.color);
+    EXPECT_EQ(world.color_at(ray, 0), world.objects[1]->material.color);
 }
 
 TEST(WorldTest, NoShadowNothingCollinear) {
@@ -99,6 +101,68 @@ TEST(WorldTest, ShadeHitInShadow) {
     Intersection x = Intersection(4, s2);
     Hit hit = Hit(x, ray);
 
-    Color color = world.shade_hit(hit);
+    Color color = world.shade_hit(hit, 0);
     EXPECT_EQ(color, Color(0.1, 0.1, 0.1));
+}
+
+TEST(WorldTest, ReflectedColorNonreflective) {
+    World world = World::example_world();
+    Ray ray = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 0, 1));
+    auto shape = world.objects[1];
+    shape->material.ambient = 1.0;
+    Intersection x = Intersection(1, shape);
+    Hit hit = Hit(x, ray);
+
+    EXPECT_EQ(world.reflected_color(hit, 1), Color(0, 0, 0));
+}
+
+TEST(WorldTest, ReflectedColorReflective) {
+    World world = World::example_world();
+    auto shape = std::make_shared<Plane>(translation(0, -1, 0));
+    shape->material.reflectivity = 0.5;
+    world.objects.push_back(shape);
+    Ray ray = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    Intersection x = Intersection(M_SQRT2, shape);
+    Hit hit = Hit(x, ray);
+
+    EXPECT_EQ(world.reflected_color(hit, 1), Color(0.19032, 0.2379, 0.14274));
+}
+
+TEST(WorldTest, ShadeHitReflective) {
+    World world = World::example_world();
+    auto shape = std::make_shared<Plane>(translation(0, -1, 0));
+    shape->material.reflectivity = 0.5;
+    world.objects.push_back(shape);
+    Ray ray = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    Intersection x = Intersection(M_SQRT2, shape);
+    Hit hit = Hit(x, ray);
+
+    EXPECT_EQ(world.shade_hit(hit, 1), Color(0.87677, 0.92436, 0.82918));
+}
+
+TEST(WorldTest, RepeatedReflectionTerminates) {
+    World world = World();
+    world.lights.emplace_back(Tuple::point(0, 0, 0), Color(1, 1, 1));
+    auto lower = std::make_shared<Plane>(translation(0, -1, 0));
+    lower->material.reflectivity = 1.0;
+    world.objects.push_back(lower);
+    auto upper = std::make_shared<Plane>(translation(0, 1, 0));
+    upper->material.reflectivity = 1.0;
+    world.objects.push_back(upper);
+    Ray ray = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
+
+    Color color = world.color_at(ray, 5);
+    SUCCEED();
+}
+
+TEST(WorldTest, ReflectedColorMaxRecursion) {
+    World world = World::example_world();
+    auto shape = std::make_shared<Plane>(translation(0, -1, 0));
+    shape->material.reflectivity = 0.5;
+    world.objects.push_back(shape);
+    Ray ray = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    Intersection x = Intersection(M_SQRT2, shape);
+    Hit hit = Hit(x, ray);
+
+    EXPECT_EQ(world.reflected_color(hit, 0), Color(0, 0, 0));
 }

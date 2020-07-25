@@ -20,8 +20,10 @@ public:
 
     bool is_shadowed(const Tuple& point, const PointLight &light) const;
 
-    Color shade_hit(const Hit& hit) const;
+    Color shade_hit(const Hit& hit, int remaining) const;
 
-    Color color_at(const Ray& ray) const;
+    Color color_at(const Ray& ray, int remaining) const;
+
+    Color reflected_color(const Hit& hit, int remaining) const;
 
 };

@@ -9,6 +9,7 @@ Material::Material() {
     diffuse = 0.9;
     specular = 0.9;
     shininess = 200.0;
+    reflectivity = 0.0;
 }
 
 bool Material::operator==(const Material &other) const {

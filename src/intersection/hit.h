@@ -12,6 +12,7 @@ public:
     Tuple point = Tuple::point(0, 0, 0);
     Tuple eyev = Tuple::vector(0, 0, 0);
     Tuple normalv = Tuple::vector(0, 0, 0);
+    Tuple reflectv = Tuple::vector(0, 0, 0);
 
     bool inside = false;
 

@@ -1,8 +1,10 @@
 #include "gtest/gtest.h"
 #include "intersection/intersection.h"
 #include "shapes/sphere.h"
+#include "shapes/plane.h"
 #include "intersection/hit.h"
 #include "math/transform.h"
+#include <cmath>
 
 TEST(IntersectionTest, CreatingIntersection) {
     auto s = std::make_shared<Sphere>();
@@ -103,4 +105,14 @@ TEST(IntersectionTest, HitOffsetPoint) {
     Hit hit = Hit(x, ray);
     EXPECT_LT(hit.over_point.z, -0.01 / 2);
     EXPECT_GT(hit.point.z, hit.over_point.z);
+}
+
+TEST(IntersectionTest, HitComputeReflection) {
+    Ray ray = Ray(Tuple::point(0, 1, -1), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    auto shape = std::make_shared<Plane>();
+    std::vector<Intersection> xs = shape->intersect(ray);
+    Intersection x = hit(xs);
+
+    Hit hit = Hit(x, ray);
+    EXPECT_EQ(hit.reflectv, Tuple::vector(0, M_SQRT2 / 2, M_SQRT2 / 2));
 }
