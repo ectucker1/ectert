@@ -26,4 +26,5 @@ public:
 
     Color reflected_color(const Hit& hit, int remaining) const;
 
+    Color refracted_color(const Hit &hit, int remaining) const;
 };

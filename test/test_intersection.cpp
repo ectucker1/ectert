@@ -4,6 +4,7 @@
 #include "shapes/plane.h"
 #include "intersection/hit.h"
 #include "math/transform.h"
+#include "test_helpers.h"
 #include <cmath>
 
 TEST(IntersectionTest, CreatingIntersection) {
@@ -73,7 +74,7 @@ TEST(IntersectionTest, PrecomputeHitDataOutside) {
     auto shape = std::make_shared<Sphere>();
     Intersection x = Intersection(4, shape);
 
-    Hit hit = Hit(x, ray);
+    Hit hit = Hit(x, ray, std::vector<Intersection>());
     EXPECT_EQ(hit.t, x.t);
     EXPECT_EQ(hit.object, shape);
     EXPECT_EQ(hit.point, Tuple::point(0, 0, -1));
@@ -87,7 +88,7 @@ TEST(IntersectionTest, PrecomputeHitDataInside) {
     auto shape = std::make_shared<Sphere>();
     Intersection x = Intersection(1, shape);
 
-    Hit hit = Hit(x, ray);
+    Hit hit = Hit(x, ray, std::vector<Intersection>());
     EXPECT_EQ(hit.t, x.t);
     EXPECT_EQ(hit.object, shape);
     EXPECT_EQ(hit.point, Tuple::point(0, 0, 1));
@@ -102,7 +103,7 @@ TEST(IntersectionTest, HitOffsetPoint) {
     std::vector<Intersection> xs = s->intersect(ray);
     Intersection x = hit(xs);
 
-    Hit hit = Hit(x, ray);
+    Hit hit = Hit(x, ray, std::vector<Intersection>());
     EXPECT_LT(hit.over_point.z, -0.01 / 2);
     EXPECT_GT(hit.point.z, hit.over_point.z);
 }
@@ -113,6 +114,62 @@ TEST(IntersectionTest, HitComputeReflection) {
     std::vector<Intersection> xs = shape->intersect(ray);
     Intersection x = hit(xs);
 
-    Hit hit = Hit(x, ray);
+    Hit hit = Hit(x, ray, std::vector<Intersection>());
     EXPECT_EQ(hit.reflectv, Tuple::vector(0, M_SQRT2 / 2, M_SQRT2 / 2));
+}
+
+TEST(IntersectionTest, FindingMaterialN1N2) {
+    auto a = test_glass_sphere();
+    a->transform(scaling(2, 2, 2));
+    a->material.ior = 1.5;
+
+    auto b = test_glass_sphere();
+    b->transform(translation(0, 0, -0.25));
+    b->material.ior = 2.0;
+
+    auto c = test_glass_sphere();
+    c->transform(translation(0, 0, 0.25));
+    c->material.ior = 2.5;
+
+    Ray ray = Ray(Tuple::point(0, 0, -4), Tuple::vector(0, 0, 1));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(2, a);
+    xs.emplace_back(2.75, b);
+    xs.emplace_back(3.25, c);
+    xs.emplace_back(4.75, b);
+    xs.emplace_back(5.25, c);
+    xs.emplace_back(6, a);
+
+    Hit hit0 = Hit(xs[0], ray, xs);
+    EXPECT_FLOAT_EQ(hit0.n1, 1.0);
+    EXPECT_FLOAT_EQ(hit0.n2, 1.5);
+    Hit hit1 = Hit(xs[1], ray, xs);
+    EXPECT_FLOAT_EQ(hit1.n1, 1.5);
+    EXPECT_FLOAT_EQ(hit1.n2, 2.0);
+    Hit hit2 = Hit(xs[2], ray, xs);
+    EXPECT_FLOAT_EQ(hit2.n1, 2.0);
+    EXPECT_FLOAT_EQ(hit2.n2, 2.5);
+    Hit hit3 = Hit(xs[3], ray, xs);
+    EXPECT_FLOAT_EQ(hit3.n1, 2.5);
+    EXPECT_FLOAT_EQ(hit3.n2, 2.5);
+    Hit hit4 = Hit(xs[4], ray, xs);
+    EXPECT_FLOAT_EQ(hit4.n1, 2.5);
+    EXPECT_FLOAT_EQ(hit4.n2, 1.5);
+    Hit hit5 = Hit(xs[5], ray, xs);
+    EXPECT_FLOAT_EQ(hit5.n1, 1.5);
+    EXPECT_FLOAT_EQ(hit5.n2, 1.0);
+}
+
+TEST(IntersectionTest, UnderPointUnderSurface) {
+    Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+    auto shape = test_glass_sphere();
+    shape->transform(translation(0, 0, 1));
+    Intersection x = Intersection(5, shape);
+    auto xs = std::vector<Intersection>();
+    xs.push_back(x);
+
+    Hit hit = Hit(x, ray, xs);
+    // Hit should be shifted upwards
+    EXPECT_GT(hit.under_point.z, 0.01 / 2);
+    EXPECT_LT(hit.point.z, hit.under_point.z);
 }

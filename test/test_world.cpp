@@ -2,6 +2,7 @@
 #include "world/world.h"
 #include "math/transform.h"
 #include "shapes/plane.h"
+#include "pattern/test_pattern.h"
 #include <algorithm>
 #include <cmath>
 
@@ -165,4 +166,78 @@ TEST(WorldTest, ReflectedColorMaxRecursion) {
     Hit hit = Hit(x, ray);
 
     EXPECT_EQ(world.reflected_color(hit, 0), Color(0, 0, 0));
+}
+
+TEST(WorldTest, RefractedColorOpaque) {
+    World world = World::example_world();
+    Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+    auto shape = world.objects[0];
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(4, shape);
+    xs.emplace_back(6, shape);
+    Hit hit = Hit(xs[0], ray, xs);
+
+    EXPECT_EQ(world.refracted_color(hit, 1), Color(0, 0, 0));
+}
+
+TEST(WorldTest, RefractedColorMaxRecursiveDepth) {
+    World world = World::example_world();
+    world.objects[0]->material.alpha = 0.0;
+    world.objects[0]->material.ior = 1.5;
+    Ray ray = Ray(Tuple::point(0, 0, -5), Tuple::vector(0, 0, 1));
+    auto shape = world.objects[0];
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(4, shape);
+    xs.emplace_back(6, shape);
+    Hit hit = Hit(xs[0], ray, xs);
+
+    EXPECT_EQ(world.refracted_color(hit, 0), Color(0, 0, 0));
+}
+
+TEST(WorldTest, RefractedColorTotalInternalRefraction) {
+    World world = World::example_world();
+    world.objects[0]->material.alpha = 0.0;
+    world.objects[0]->material.ior = 1.5;
+    Ray ray = Ray(Tuple::point(0, 0, M_SQRT2 / 2), Tuple::vector(0, 1, 0));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(-M_SQRT2 / 2, world.objects[0]);
+    xs.emplace_back(M_SQRT2 / 2, world.objects[0]);
+    Hit hit = Hit(xs[1], ray, xs);
+
+    EXPECT_EQ(world.refracted_color(hit, 5), Color(0, 0, 0));
+}
+
+TEST(WorldTest, RefractedColorRefractedRay) {
+    World world = World::example_world();
+    world.objects[0]->material.ambient = 1.0;
+    world.objects[0]->material.pattern = std::make_shared<TestPattern>();
+    world.objects[1]->material.alpha = 0.0;
+    world.objects[1]->material.ior = 1.5;
+    Ray ray = Ray(Tuple::point(0, 0, 0.1), Tuple::vector(0, 1, 0));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(-0.9899, world.objects[0]);
+    xs.emplace_back(-0.4899, world.objects[1]);
+    xs.emplace_back(0.4899, world.objects[1]);
+    xs.emplace_back(0.9899, world.objects[0]);
+    Hit hit = Hit(xs[2], ray, xs);
+
+    EXPECT_EQ(world.refracted_color(hit, 5), Color(0, 0.99888, 0.04725));
+}
+
+TEST(WorldTest, ShadeHitTransparent) {
+    World world = World::example_world();
+    auto floor = std::make_shared<Plane>(translation(0, -1, 0));
+    floor->material.alpha = 0.5;
+    floor->material.ior = 1.5;
+    world.objects.push_back(floor);
+    auto ball = std::make_shared<Sphere>(translation(0, -3.5, -0.5));
+    ball->material.color = Color(1, 0, 0);
+    ball->material.ambient = 0.5;
+    world.objects.push_back(ball);
+    Ray ray = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(M_SQRT2, floor);
+    Hit hit = Hit(xs[0], ray, xs);
+
+    EXPECT_EQ(world.shade_hit(hit, 5), Color(0.93642, 0.68642, 0.68642));
 }
