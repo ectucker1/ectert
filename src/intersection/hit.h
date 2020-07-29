@@ -25,4 +25,6 @@ public:
     Hit(const Intersection& intersection, const Ray& ray,
             const std::vector<Intersection>& xs = std::vector<Intersection>());
 
+    float schlick_reflectance() const;
+
 };

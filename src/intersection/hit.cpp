@@ -1,5 +1,6 @@
 #include "hit.h"
 #include <algorithm>
+#include <cmath>
 
 Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Intersection>& xs) : object(intersection.object) {
     t = intersection.t;
@@ -54,4 +55,25 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
             break;
         }
     }
+}
+
+float Hit::schlick_reflectance() const {
+    float cos = eyev.dot(normalv);
+
+    // Precondition for total internal reflection
+    if (n1 > n2) {
+        float n_ratio = n1 / n2;
+        float sin2_t = n_ratio * n_ratio * (1 - cos * cos);
+        if (sin2_t > 1) {
+            // Fully reflective with total internal reflection
+            return 1.0;
+        }
+
+        // When N1 > N2, use cos_t instead of cos_i
+        cos = sqrtf(1 - sin2_t);
+    }
+
+    // See "Reflections and Refractions in Ray Tracing", de Greve, 2006 for math details
+    float r0 = ((n1 - n2) / (n1 + n2)) * ((n1 - n2) / (n1 + n2));
+    return r0 + (1 - r0) * powf((1 - cos), 5);
 }

@@ -47,14 +47,25 @@ bool World::is_shadowed(const Tuple &point, const PointLight &light) const {
 
 Color World::shade_hit(const Hit &hit, int remaining) const {
     Color total = Color();
+
+    Material mat = hit.object->material;
+
+    Color reflected = reflected_color(hit, remaining);
+    Color refracted = refracted_color(hit, remaining);
+
     for (PointLight light : lights) {
         bool shadowed = is_shadowed(hit.over_point, light);
-        Color surface = hit.object->material.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
-        Color reflected = reflected_color(hit, remaining);
-        Color refracted = refracted_color(hit, remaining);
-        total = total + surface + reflected + refracted;
+        Color surface = mat.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
+        total = total + surface;
     }
-    return total;
+
+    // If material is both reflective and transparent
+    if (mat.reflectivity > 0 && mat.alpha < 1) {
+        float reflectance = hit.schlick_reflectance();
+        return total + reflected * reflectance + refracted * (1 - reflectance);
+    }
+
+    return total + reflected + refracted;
 }
 
 Color World::color_at(const Ray &ray, int remaining) const {

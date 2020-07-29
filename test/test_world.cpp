@@ -241,3 +241,23 @@ TEST(WorldTest, ShadeHitTransparent) {
 
     EXPECT_EQ(world.shade_hit(hit, 5), Color(0.93642, 0.68642, 0.68642));
 }
+
+TEST(WorldTest, UseReflectanceShading) {
+    World world = World::example_world();
+    auto floor = std::make_shared<Plane>(translation(0, -1, 0));
+    floor->material.alpha = 0.5;
+    floor->material.reflectivity = 0.5;
+    floor->material.ior = 1.5;
+    world.objects.push_back(floor);
+    auto ball = std::make_shared<Sphere>(translation(0, -3.5, -0.5));
+    ball->material.color = Color(1, 0, 0);
+    ball->material.ambient = 0.5;
+    world.objects.push_back(ball);
+    Ray ray = Ray(Tuple::point(0, 0, -3), Tuple::vector(0, -M_SQRT2 / 2, M_SQRT2 / 2));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(M_SQRT2, floor);
+    Hit hit = Hit(xs[0], ray, xs);
+
+    EXPECT_EQ(world.shade_hit(hit, 5), Color(0.93391, 0.69643, 0.69243));
+}
+

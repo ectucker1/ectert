@@ -173,3 +173,35 @@ TEST(IntersectionTest, UnderPointUnderSurface) {
     EXPECT_GT(hit.under_point.z, 0.01 / 2);
     EXPECT_LT(hit.point.z, hit.under_point.z);
 }
+
+TEST(IntersectionTest, SchlickTotalInternal) {
+    auto shape = test_glass_sphere();
+    Ray ray = Ray(Tuple::point(0, 0, M_SQRT2 / 2), Tuple::vector(0, 1, 0));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(-M_SQRT2 / 2, shape);
+    xs.emplace_back(M_SQRT2 / 2, shape);
+
+    Hit hit = Hit(xs[1], ray, xs);
+    EXPECT_FLOAT_EQ(hit.schlick_reflectance(), 1.0);
+}
+
+TEST(IntersectionTest, SchlickSmallPerpendicular) {
+    auto shape = test_glass_sphere();
+    Ray ray = Ray(Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(-1, shape);
+    xs.emplace_back(1, shape);
+
+    Hit hit = Hit(xs[1], ray, xs);
+    EXPECT_FLOAT_EQ(hit.schlick_reflectance(), 0.04);
+}
+
+TEST(IntersectionTest, SchlickSmallShallow) {
+    auto shape = test_glass_sphere();
+    Ray ray = Ray(Tuple::point(0, 0.99, -2), Tuple::vector(0, 0, 1));
+    auto xs = std::vector<Intersection>();
+    xs.emplace_back(1.8589, shape);
+
+    Hit hit = Hit(xs[0], ray, xs);
+    EXPECT_FLOAT_EQ(hit.schlick_reflectance(), 0.4887307);
+}

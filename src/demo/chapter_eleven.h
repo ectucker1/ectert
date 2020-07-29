@@ -11,32 +11,49 @@
 void run_chapter_eleven() {
     World world = World();
 
-    Material wallMaterial = Material();
-    wallMaterial.pattern = std::make_shared<StripedPattern>(Color(0, 0, 0), Color(1, 1, 1));
-    wallMaterial.pattern->transform(scaling(0.1, 0.1, 0.1));
-    wallMaterial.diffuse = 0.8;
-    wallMaterial.specular = 0.1;
+    Material backgroundMat = Material();
+    backgroundMat.pattern = std::make_shared<StripedPattern>(Color(0, 0, 0), Color(1, 1, 1));
+    backgroundMat.pattern->transform(scaling(0.1, 0.1, 0.1));
+    backgroundMat.diffuse = 0.8;
+    backgroundMat.specular = 0.1;
 
-    Material centerMaterial = Material();
-    centerMaterial.color = Color(0xDA / 255.0, 0xF3 / 255.0, 0xEC / 255.0);
-    centerMaterial.diffuse = 0.3;
-    centerMaterial.specular = 0.8;
-    centerMaterial.alpha = 0.3;
-    centerMaterial.ior = 1.5;
+    Material glassMat = Material();
+    glassMat.color = Color(0.8, 0.8, 0.8);
+    glassMat.diffuse = 0.01;
+    glassMat.ambient = 0.2;
+    glassMat.specular = 0.9;
+    glassMat.shininess = 400;
+    glassMat.alpha = 0.3;
+    glassMat.reflectivity = 0.8;
+    glassMat.ior = 1.52;
 
-    auto floor = std::make_shared<Plane>(scaling(10, 0.01, 10));
-    floor->material = wallMaterial;
+    Material waterMat = Material();
+    waterMat.color = Color(0x00 / 255.0, 0x69 / 255.0, 0x94 / 255.0);
+    waterMat.diffuse = 0.1;
+    waterMat.ambient = 0.3;
+    waterMat.specular = 0.9;
+    waterMat.shininess = 200;
+    waterMat.alpha = 0.3;
+    waterMat.reflectivity = 0.8;
+    waterMat.ior = 1.33;
 
-    auto center = std::make_shared<Sphere>(translation(-0.5, 1, 0.5));
-    center->material = centerMaterial;
+    auto background = std::make_shared<Plane>(rotation_x(M_PI_2) * translation(0, 0, 1.5));
+    background->material = backgroundMat;
 
-    world.objects.push_back(floor);
-    world.objects.push_back(center);
+    auto glass = std::make_shared<Sphere>(translation(0, 0, 0));
+    glass->material = glassMat;
+
+    auto water = std::make_shared<Sphere>(translation(0, 0, 0) * scaling(2, 2, 2));
+    water->material = waterMat;
+
+    world.objects.push_back(background);
+    world.objects.push_back(glass);
+    world.objects.push_back(water);
 
     world.lights.emplace_back(Tuple::point(-10, 10, -10), Color(1.0, 1.0, 1.0));
 
-    Camera cam = Camera(1024, 512, M_PI / 3);
-    cam.transform(view_transform(Tuple::point(0, 1.5, -5), Tuple::point(0, 1, 0), Tuple::vector(0, 1, 0)));
+    Camera cam = Camera(2048, 1024, M_PI / 3);
+    cam.transform(view_transform(Tuple::point(0, 0, -10), Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0)));
 
     Canvas canvas = cam.render(world);
     write_ppm(canvas, "chapter11.ppm");
