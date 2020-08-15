@@ -1,4 +1,5 @@
 #include "shape.h"
+#include "group.h"
 
 Shape::Shape() : _transform(Matrix::identity()), _inverse(_transform.inverse()) {}
 Shape::Shape(const Matrix& transform) : _transform(transform), _inverse(_transform.inverse()) {}
@@ -22,10 +23,28 @@ std::vector<Intersection> Shape::intersect(const Ray &ray) const {
     return local_intersect(local_ray);
 }
 
-Tuple Shape::normal_at(const Tuple &point) const {
-    Tuple local_point = _inverse * point;
-    Tuple local_normal = local_normal_at(local_point);
-    Tuple world_normal = _inverse.transposed() * local_normal;
+Tuple Shape::world_to_object(const Tuple& world) const {
+    if (parent != nullptr) {
+        return _inverse * parent->world_to_object(world);
+    }
+
+    return _inverse * world;
+}
+
+Tuple Shape::normal_to_world(const Tuple& normal) const {
+    Tuple world_normal = _inverse.transposed() * normal;
     world_normal.w = 0;
-    return world_normal.normalized();
+    world_normal = world_normal.normalized();
+
+    if (parent != nullptr) {
+        world_normal = parent->normal_to_world(world_normal);
+    }
+
+    return world_normal;
+}
+
+Tuple Shape::normal_at(const Tuple &point) const {
+    Tuple local_point = world_to_object(point);
+    Tuple local_normal = local_normal_at(local_point);
+    return normal_to_world(local_normal);
 }

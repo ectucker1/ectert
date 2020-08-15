@@ -18,5 +18,5 @@ Matrix Pattern::inverse() const {
 }
 
 Color Pattern::sample_shape(const std::shared_ptr<const Shape>& shape, Tuple position) const {
-    return sample_pattern(inverse() * shape->inverse() * position);
+    return sample_pattern(inverse() * shape->world_to_object(position));
 }

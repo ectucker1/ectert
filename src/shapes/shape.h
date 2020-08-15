@@ -1,6 +1,7 @@
 #pragma once
 
 class Intersection;
+class Group;
 
 #include "intersection/ray.h"
 #include "intersection/intersection.h"
@@ -12,6 +13,7 @@ class Shape : public std::enable_shared_from_this<Shape> {
 
 public:
     Material material;
+    std::shared_ptr<Group> parent;
 
     Shape();
     Shape(const Matrix& transform);
@@ -22,6 +24,9 @@ public:
     Matrix inverse() const;
 
     std::vector<Intersection> intersect(const Ray& ray) const;
+
+    Tuple world_to_object(const Tuple& world) const;
+    Tuple normal_to_world(const Tuple& normal) const;
 
     Tuple normal_at(const Tuple& point) const;
 
