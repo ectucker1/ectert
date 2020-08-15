@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "shapes/cube.h"
+#include "math/bounds.h"
 
 TEST(CubeTest, IntersectingCube) {
     auto c = std::make_shared<Cube>();
@@ -62,4 +63,10 @@ TEST(CubeTest, NormalOnCube) {
     EXPECT_EQ(c->normal_at(Tuple::point(0.4, 0.4, -1)), Tuple::vector(0, 0, -1));
     EXPECT_EQ(c->normal_at(Tuple::point(1, 1, 1)), Tuple::vector(1, 0, 0));
     EXPECT_EQ(c->normal_at(Tuple::point(-1, -1, -1)), Tuple::vector(-1, 0, 0));
+}
+
+TEST(CubeTest, BoundsOfCube) {
+    auto cube = std::make_shared<Cube>();
+
+    EXPECT_EQ(cube->bounds(), Bounds(-1, 1, -1, 1, -1, 1));
 }

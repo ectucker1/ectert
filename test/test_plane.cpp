@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 #include "shapes/plane.h"
+#include "math/bounds.h"
+#include <cmath>
 
 TEST(PlaneTest, NormalConstant) {
     Plane plane = Plane();
@@ -43,4 +45,10 @@ TEST(PlaneTest, IntersectBelow) {
     ASSERT_EQ(xs.size(), 1);
     EXPECT_FLOAT_EQ(xs[0].t, 1);
     EXPECT_EQ(xs[0].object, plane);
+}
+
+TEST(PlaneTest, BoundsOfPlane) {
+    auto plane = std::make_shared<Plane>();
+
+    EXPECT_EQ(plane->bounds(), Bounds(-INFINITY, INFINITY, 0, 0, -INFINITY, INFINITY));
 }

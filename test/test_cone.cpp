@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "shapes/cone.h"
+#include "math/bounds.h"
 #include <cmath>
 
 TEST(ConeTest, IntersectingCone) {
@@ -46,4 +47,14 @@ TEST(ConeTest, NormalOnCone) {
 
     EXPECT_EQ(shape->normal_at(Tuple::point(1, 1, 1)), Tuple::vector(1, -M_SQRT2, 1).normalized());
     EXPECT_EQ(shape->normal_at(Tuple::point(-1, -1, 0)), Tuple::vector(-1, 1, 0).normalized());
+}
+
+TEST(ConeTest, BoundsOfCone) {
+    auto c1 = std::make_shared<Cone>();
+    auto c2 = std::make_shared<Cone>();
+    c2->minimum = -1;
+    c2->maximum = 1;
+
+    EXPECT_EQ(c1->bounds(), Bounds(-INFINITY, INFINITY, -INFINITY, INFINITY, -INFINITY, INFINITY));
+    EXPECT_EQ(c2->bounds(), Bounds(-1, 1, -1, 1, -1, 1));
 }

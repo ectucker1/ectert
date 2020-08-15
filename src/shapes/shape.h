@@ -2,6 +2,7 @@
 
 class Intersection;
 class Group;
+class Bounds;
 
 #include "intersection/ray.h"
 #include "intersection/intersection.h"
@@ -29,6 +30,8 @@ public:
     Tuple normal_to_world(const Tuple& normal) const;
 
     Tuple normal_at(const Tuple& point) const;
+
+    virtual Bounds bounds() const = 0;
 
 private:
     Matrix _transform;

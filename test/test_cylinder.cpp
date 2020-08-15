@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "shapes/cylinder.h"
+#include "math/bounds.h"
 #include <cmath>
 
 TEST(CylinderTest, MissingCylinder) {
@@ -96,4 +97,14 @@ TEST(CylinderTest, NormalOnCaps) {
     EXPECT_EQ(cylinder->normal_at(Tuple::point(0, 2, 0)), Tuple::vector(0, 1, 0));
     EXPECT_EQ(cylinder->normal_at(Tuple::point(0.5, 2, 0)), Tuple::vector(0, 1, 0));
     EXPECT_EQ(cylinder->normal_at(Tuple::point(0, 2, 0.5)), Tuple::vector(0, 1, 0));
+}
+
+TEST(CylinderTest, BoundsOfCylinder) {
+    auto c1 = std::make_shared<Cylinder>();
+    auto c2 = std::make_shared<Cylinder>();
+    c2->minimum = -1;
+    c2->maximum = 1;
+
+    EXPECT_EQ(c1->bounds(), Bounds(-1, 1, -INFINITY, INFINITY, -1, 1));
+    EXPECT_EQ(c2->bounds(), Bounds(-1, 1, -1, 1, -1, 1));
 }

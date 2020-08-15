@@ -1,4 +1,5 @@
 #include "cylinder.h"
+#include "math/bounds.h"
 #include <cmath>
 
 Cylinder::Cylinder() {};
@@ -81,4 +82,8 @@ void Cylinder::intersect_caps(const Ray& local_ray, std::vector<Intersection>& x
     if (check_caps(local_ray, t1)) {
         xs.emplace_back(t1, shared_from_this());
     }
+}
+
+Bounds Cylinder::bounds() const {
+    return Bounds(-1, 1, minimum, maximum, -1, 1);
 }

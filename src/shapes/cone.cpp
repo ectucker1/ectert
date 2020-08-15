@@ -1,4 +1,5 @@
 #include "cone.h"
+#include "math/bounds.h"
 #include <cmath>
 
 Cone::Cone() {};
@@ -93,4 +94,9 @@ void Cone::intersect_caps(const Ray& local_ray, std::vector<Intersection>& xs) c
     if (check_caps(local_ray, t1, maximum)) {
         xs.emplace_back(t1, shared_from_this());
     }
+}
+
+Bounds Cone::bounds() const {
+    float max_dimen = std::max(std::abs(minimum), std::abs(maximum));
+    return Bounds(-max_dimen, max_dimen, minimum, maximum, -max_dimen, max_dimen);
 }

@@ -1,5 +1,7 @@
 #include "plane.h"
+#include "math/bounds.h"
 #include "math/float_util.h"
+#include <cmath>
 
 Plane::Plane() : Shape() {}
 
@@ -17,4 +19,8 @@ std::vector<Intersection> Plane::local_intersect(const Ray &local_ray) const {
 
 Tuple Plane::local_normal_at(const Tuple &local_point) const {
     return Tuple::vector(0, 1, 0);
+}
+
+Bounds Plane::bounds() const {
+    return Bounds(-INFINITY, INFINITY, 0, 0, -INFINITY, INFINITY);
 }

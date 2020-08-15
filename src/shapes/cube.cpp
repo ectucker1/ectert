@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "math/bounds.h"
 #include <algorithm>
 #include <cmath>
 
@@ -47,7 +48,6 @@ std::pair<float, float> Cube::check_axis(float origin, float direction) const {
     return {tmin, tmax};
 }
 
-
 Tuple Cube::local_normal_at(const Tuple &local_point) const {
     Tuple point_abs = Tuple::point(std::abs(local_point.x), std::abs(local_point.y), std::abs(local_point.z));
 
@@ -59,4 +59,8 @@ Tuple Cube::local_normal_at(const Tuple &local_point) const {
     } else {
         return Tuple::vector(0, 0, local_point.z);
     }
+}
+
+Bounds Cube::bounds() const {
+    return Bounds(-1, 1, -1, 1, -1, 1);
 }

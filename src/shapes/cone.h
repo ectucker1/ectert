@@ -14,6 +14,8 @@ public:
     Cone();
     Cone(const Matrix& transform);
 
+    Bounds bounds() const override;
+
 private:
     std::vector<Intersection> local_intersect(const Ray& local_ray) const override;
     bool check_caps(const Ray& local_ray, const float t, const float plane) const;

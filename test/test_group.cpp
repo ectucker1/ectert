@@ -2,7 +2,9 @@
 #include "shapes/group.h"
 #include "shapes/test_shape.h"
 #include "shapes/sphere.h"
+#include "shapes/plane.h"
 #include "math/transform.h"
+#include <cmath>
 
 TEST(GroupTest, CreatingNewGroup) {
     auto g = Group();
@@ -57,4 +59,23 @@ TEST(GroupTest, IntersectingTransformedGroup) {
 
     auto xs = g->intersect(r);
     EXPECT_EQ(xs.size(), 2);
+}
+
+TEST(GroupTest, AddingChildrenExpandsBounds) {
+    auto g = std::make_shared<Group>();
+
+    auto s1 = std::make_shared<Sphere>();
+    auto s2 = std::make_shared<Sphere>(translation(-1, 0, 0));
+    auto s3 = std::make_shared<Sphere>(scaling(2, 3, 0.5));
+    auto s4 = std::make_shared<Plane>();
+
+    EXPECT_EQ(g->bounds(), Bounds(0, 0, 0, 0, 0, 0));
+    g->add_child(s1);
+    EXPECT_EQ(g->bounds(), Bounds(-1, 1, -1, 1, -1, 1));
+    g->add_child(s2);
+    EXPECT_EQ(g->bounds(), Bounds(-2, 1, -1, 1, -1, 1));
+    g->add_child(s3);
+    EXPECT_EQ(g->bounds(), Bounds(-2, 2, -3, 3, -1, 1));
+    g->add_child(s4);
+    EXPECT_EQ(g->bounds(), Bounds(-INFINITY, INFINITY, -INFINITY, INFINITY, -INFINITY, INFINITY));
 }

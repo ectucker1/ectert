@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "shapes/sphere.h"
 #include "math/transform.h"
+#include "math/bounds.h"
 #include <cmath>
 
 TEST(SphereTest, IntersectingSphere) {
@@ -71,4 +72,10 @@ TEST(SphereTest, NormalIsNormalized) {
     Tuple normal = sphere->normal_at(Tuple::point(std::sqrt(3.0f) / 3, std::sqrt(3.0f) / 3, std::sqrt(3.0f) / 3));
 
     EXPECT_EQ(normal, normal.normalized());
+}
+
+TEST(SphereTest, BoundsOfSphere) {
+    auto sphere = std::make_shared<Sphere>();
+
+    EXPECT_EQ(sphere->bounds(), Bounds(-1, 1, -1, 1, -1, 1));
 }

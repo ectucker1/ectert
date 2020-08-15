@@ -1,4 +1,5 @@
 #include "sphere.h"
+#include "math/bounds.h"
 #include <cmath>
 
 Sphere::Sphere() : Shape() {}
@@ -28,4 +29,8 @@ Tuple Sphere::local_normal_at(const Tuple &local_point) const {
 
 bool Sphere::operator==(const Sphere &other) const {
     return true;
+}
+
+Bounds Sphere::bounds() const {
+    return Bounds(-1, 1, -1, 1, -1, 1);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shape.h"
+#include "math/bounds.h"
 
 class Group : public Shape {
 
@@ -20,8 +21,13 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    Bounds bounds() const override;
+
 private:
-    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<Shape>> _shapes;
+    Bounds _bounds;
+
+    void expand_bounds(const std::shared_ptr<Shape> shape);
 
     std::vector<Intersection> local_intersect(const Ray& local_ray) const override;
     Tuple local_normal_at(const Tuple& local_point) const override;
