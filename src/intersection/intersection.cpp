@@ -2,7 +2,8 @@
 #include <cmath>
 #include <algorithm>
 
-Intersection::Intersection(float t, const std::shared_ptr<const Shape> object) : t(t), object(object) {}
+Intersection::Intersection(float t, const std::shared_ptr<const Shape> object, float u, float v)
+    : t(t), object(object), u(u), v(v) {}
 
 const Intersection Intersection::NIL = Intersection(-INFINITY, std::shared_ptr<Shape>());
 

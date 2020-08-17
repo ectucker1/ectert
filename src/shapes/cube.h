@@ -15,6 +15,6 @@ public:
 private:
     std::vector<Intersection> local_intersect(const Ray& local_ray) const override;
     std::pair<float, float> check_axis(float origin, float direction) const;
-    Tuple local_normal_at(const Tuple& local_point) const override;
+    Tuple local_normal_at(const Tuple& local_point, const Intersection& intersection) const override;
 
 };

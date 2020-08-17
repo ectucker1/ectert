@@ -29,7 +29,7 @@ public:
     Tuple world_to_object(const Tuple& world) const;
     Tuple normal_to_world(const Tuple& normal) const;
 
-    Tuple normal_at(const Tuple& point) const;
+    Tuple normal_at(const Tuple& point, const Intersection& intersection = Intersection::NIL) const;
 
     virtual Bounds bounds() const = 0;
 
@@ -38,6 +38,6 @@ private:
     Matrix _inverse;
 
     virtual std::vector<Intersection> local_intersect(const Ray& local_ray) const = 0;
-    virtual Tuple local_normal_at(const Tuple& local_point) const = 0;
+    virtual Tuple local_normal_at(const Tuple& local_point, const Intersection& intersection) const = 0;
 
 };

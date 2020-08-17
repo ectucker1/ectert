@@ -4,6 +4,7 @@ project (ectert)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(src)
+include_directories(lib/tinyobjloader)
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 

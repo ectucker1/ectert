@@ -48,7 +48,7 @@ std::pair<float, float> Cube::check_axis(float origin, float direction) const {
     return {tmin, tmax};
 }
 
-Tuple Cube::local_normal_at(const Tuple &local_point) const {
+Tuple Cube::local_normal_at(const Tuple& local_point, const Intersection& intersection) const {
     Tuple point_abs = Tuple::point(std::abs(local_point.x), std::abs(local_point.y), std::abs(local_point.z));
 
     // Normal on cube points away from side this point is on

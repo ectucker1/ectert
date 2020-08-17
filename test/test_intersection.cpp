@@ -205,3 +205,10 @@ TEST(IntersectionTest, SchlickSmallShallow) {
     Hit hit = Hit(xs[0], ray, xs);
     EXPECT_FLOAT_EQ(hit.schlick_reflectance(), 0.4887307);
 }
+
+TEST(IntersectionTest, StoringUV) {
+    Intersection x = Intersection(0, nullptr, 0.2, 0.4);
+
+    EXPECT_FLOAT_EQ(x.u, 0.2);
+    EXPECT_FLOAT_EQ(x.v, 0.4);
+}

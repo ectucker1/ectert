@@ -43,8 +43,8 @@ Tuple Shape::normal_to_world(const Tuple& normal) const {
     return world_normal;
 }
 
-Tuple Shape::normal_at(const Tuple &point) const {
+Tuple Shape::normal_at(const Tuple &point, const Intersection& intersection) const {
     Tuple local_point = world_to_object(point);
-    Tuple local_normal = local_normal_at(local_point);
+    Tuple local_normal = local_normal_at(local_point, intersection);
     return normal_to_world(local_normal);
 }

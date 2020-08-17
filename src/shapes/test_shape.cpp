@@ -12,7 +12,7 @@ std::vector<Intersection> TestShape::local_intersect(const Ray &local_ray) const
     return xs;
 }
 
-Tuple TestShape::local_normal_at(const Tuple &local_point) const {
+Tuple TestShape::local_normal_at(const Tuple &local_point, const Intersection& intersection) const {
     return Tuple::vector(local_point.x, local_point.y, local_point.z);
 }
 

@@ -41,10 +41,13 @@ std::vector<Intersection> Group::local_intersect(const Ray &local_ray) const {
         auto shapeXS = shape->intersect(local_ray);
         xs.insert(xs.end(), shapeXS.begin(), shapeXS.end());
     }
+
+    sort_intersections(xs);
+
     return xs;
 }
 
-Tuple Group::local_normal_at(const Tuple &local_point) const {
+Tuple Group::local_normal_at(const Tuple &local_point, const Intersection& intersection) const {
     // Group does not have normals; local_intersect returns pointers to children
     return Tuple(0, 0, 0, 0);
 }

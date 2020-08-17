@@ -7,6 +7,7 @@ public:
 	float x, y, z, w;
 
 	Tuple(float x, float y, float z, float w);
+    Tuple();
 	static Tuple point(float x, float y, float z);
 	static Tuple vector(float x, float y, float z);
 

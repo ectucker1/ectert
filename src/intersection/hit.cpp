@@ -7,7 +7,7 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
 
     point = ray.position(t);
     eyev = -ray.direction;
-    normalv = object-> normal_at(point);
+    normalv = object->normal_at(point, intersection);
 
     if (normalv.dot(eyev) < 0) {
         inside = true;

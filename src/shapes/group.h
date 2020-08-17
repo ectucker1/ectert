@@ -30,7 +30,7 @@ private:
     void expand_bounds(const std::shared_ptr<Shape> shape);
 
     std::vector<Intersection> local_intersect(const Ray& local_ray) const override;
-    Tuple local_normal_at(const Tuple& local_point) const override;
+    Tuple local_normal_at(const Tuple& local_point, const Intersection& intersection) const override;
 
 
 };

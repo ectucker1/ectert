@@ -46,7 +46,7 @@ std::vector<Intersection> Cylinder::local_intersect(const Ray &local_ray) const 
     return xs;
 }
 
-Tuple Cylinder::local_normal_at(const Tuple& local_point) const {
+Tuple Cylinder::local_normal_at(const Tuple& local_point, const Intersection& intersection) const {
     // Square of distance from y axis
     float dist = local_point.x * local_point.x + local_point.z * local_point.z;
 

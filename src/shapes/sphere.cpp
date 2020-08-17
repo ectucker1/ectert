@@ -23,7 +23,7 @@ std::vector<Intersection> Sphere::local_intersect(const Ray &local_ray) const {
     return sort_intersections(results);
 }
 
-Tuple Sphere::local_normal_at(const Tuple &local_point) const {
+Tuple Sphere::local_normal_at(const Tuple &local_point, const Intersection& intersection) const {
     return Tuple::vector(local_point.x, local_point.y, local_point.z);
 }
 
