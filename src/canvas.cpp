@@ -8,7 +8,7 @@ Canvas::~Canvas() {
     delete[] pixels;
 }
 
-int Canvas::index(int x, int y) {
+int Canvas::index(int x, int y) const {
     return x + y * width;
 }
 
@@ -22,7 +22,7 @@ void Canvas::write_pixel(int x, int y, Color color) {
     pixels[index(x, y)] = color;
 }
 
-Color Canvas::get_pixel(int x, int y) {
+Color Canvas::get_pixel(int x, int y) const {
     if (x < 0 || x >= width) {
         throw std::out_of_range("X position must be within range");
     }

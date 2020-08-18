@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(src)
 include_directories(lib/tinyobjloader)
+include_directories(lib/stb)
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 

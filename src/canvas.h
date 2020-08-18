@@ -7,7 +7,7 @@ class Canvas {
 private:
     Color* pixels;
 
-    int index(int x, int y);
+    int index(int x, int y) const;
 
 public:
     int width, height;
@@ -16,6 +16,6 @@ public:
     ~Canvas();
 
     void write_pixel(int x, int y, Color color);
-    Color get_pixel(int x, int y);
+    Color get_pixel(int x, int y) const;
 
 };
