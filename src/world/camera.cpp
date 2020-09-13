@@ -29,7 +29,7 @@ Matrix Camera::inverse() {
     return _inverse;
 }
 
-Ray Camera::ray_to_pixel(int x, int y) {
+Ray Camera::ray_to_pixel(int x, int y) const {
     // Offset from edge of camera to pixel center
     float xoffset = (x + 0.5) * pixel_size;
     float yoffset = (y + 0.5) * pixel_size;
@@ -49,7 +49,7 @@ Ray Camera::ray_to_pixel(int x, int y) {
     return Ray(origin, direction);
 }
 
-Canvas Camera::render(const World& world) {
+Canvas Camera::render(const World& world) const {
     Canvas canvas = Canvas(hsize, vsize);
 
     for (int x = 0; x < canvas.width; x++) {

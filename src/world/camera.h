@@ -24,9 +24,9 @@ public:
 
     Matrix inverse();
 
-    Ray ray_to_pixel(int x, int y);
+    Ray ray_to_pixel(int x, int y) const;
 
-    Canvas render(const World& world);
+    Canvas render(const World& world) const;
 
 private:
     Matrix _transform;
