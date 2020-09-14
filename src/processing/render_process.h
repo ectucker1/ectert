@@ -14,11 +14,11 @@ private:
     std::vector<std::thread> threads;
     volatile std::atomic<int> current {0};
 
-    void render_next(Canvas& canvas, const Camera& camera, const World& world);
+    void render_next(Canvas& canvas, Camera& camera, const World& world, int strata);
 
 public:
     explicit RenderProcess(unsigned int thread_count);
 
-    Canvas render(const Camera& camera, const World& world);
+    Canvas render(Camera& camera, const World& world, int strata);
 
 };
