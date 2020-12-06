@@ -2,8 +2,13 @@
 
 #include "math/transform.h"
 #include <cmath>
+#include "light/scatter.h"
+#include "shapes/sphere.h"
+#include "light/gradient_background.h"
 
-World::World() : lights(std::vector<PointLight>()), objects(std::vector<std::shared_ptr<Shape>>()) {}
+World::World() : lights(std::vector<PointLight>()), objects(std::vector<std::shared_ptr<Shape>>()) {
+    background = std::make_shared<GradientBackground>(Color(), Color());
+}
 
 World World::example_world() {
     World world = World();
@@ -12,9 +17,9 @@ World World::example_world() {
     world.lights.push_back(light);
 
     auto s1 = std::make_shared<Sphere>();
-    s1->material.color = Color(0.8, 1.0, 0.6);
-    s1->material.diffuse = 0.7;
-    s1->material.specular = 0.2;
+    //s1->material.color = Color(0.8, 1.0, 0.6);
+    //s1->material.diffuse = 0.7;
+    //s1->material.specular = 0.2;
     world.objects.push_back(s1);
 
     auto s2 = std::make_shared<Sphere>(scaling(0.5, 0.5, 0.5));
@@ -46,33 +51,42 @@ bool World::is_shadowed(const Tuple &point, const PointLight &light) const {
 }
 
 Color World::shade_hit(const Hit &hit, int remaining) const {
-    Color total = Color();
-
-    Material mat = hit.object->material;
-
-    Color reflected = reflected_color(hit, remaining);
-    Color refracted = refracted_color(hit, remaining);
-
-    for (PointLight light : lights) {
-        bool shadowed = is_shadowed(hit.over_point, light);
-        Color surface = mat.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
-        total = total + surface;
+    // If there are no scatters remaining
+    if (remaining <= 0) {
+        return Color(0, 0, 0);
     }
 
-    // If material is both reflective and transparent
-    if (mat.reflectivity > 0 && mat.alpha < 1) {
-        float reflectance = hit.schlick_reflectance();
-        return total + reflected * reflectance + refracted * (1 - reflectance);
+    std::shared_ptr<Material> mat = hit.object->material;
+    Scatter scatter = mat->scatter(hit);
+
+    // If the light scattered
+    if (!scatter.absorbed) {
+        return scatter.attenuation * color_at(scatter.scattered, remaining - 1);
     }
 
-    return total + reflected + refracted;
+    // Return black if the light was absorbed
+    return Color(0, 0, 0);
+
+    // TODO reimplement lights
+    //for (PointLight light : lights) {
+    //    bool shadowed = is_shadowed(hit.over_point, light);
+    //    Color surface = mat.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
+    //    total = total + surface;
+    //}
+
+    // TODO reimplement schlick reflectance
+    //// If material is both reflective and transparent
+    //if (mat.reflectivity > 0 && mat.alpha < 1) {
+    //    float reflectance = hit.schlick_reflectance();
+    //    return total + reflected * reflectance + refracted * (1 - reflectance);
+    //}
 }
 
 Color World::color_at(const Ray &ray, int remaining) const {
     std::vector<Intersection> xs = intersect(ray);
     Intersection x = hit(xs);
     if (x == Intersection::NIL) {
-        return Color(0, 0, 0);
+        return background->sample_background(ray);
     }
 
     Hit data = Hit(x, ray, xs);
@@ -80,6 +94,8 @@ Color World::color_at(const Ray &ray, int remaining) const {
 }
 
 Color World::reflected_color(const Hit& hit, int remaining) const {
+    // TODO reimplement reflections
+    /*
     if (remaining < 1 || hit.object->material.reflectivity == 0) {
         return Color(0, 0, 0);
     }
@@ -90,9 +106,13 @@ Color World::reflected_color(const Hit& hit, int remaining) const {
     Color color = color_at(reflect_ray, remaining);
 
     return color * hit.object->material.reflectivity;
+     */
+    return Color(0, 0, 0);
 }
 
 Color World::refracted_color(const Hit& hit, int remaining) const {
+    // TODO reimplement refraction
+    /*
     // Default to black if object is not transparent or no recursive calls remaining
     if (remaining < 1 || hit.object->material.alpha >= 1.0) {
         return Color(0, 0, 0);
@@ -117,4 +137,6 @@ Color World::refracted_color(const Hit& hit, int remaining) const {
     Ray ray = Ray(hit.under_point, direction);
 
     return color_at(ray, remaining - 1) * (1 - hit.object->material.alpha);
+    */
+    return Color(0, 0, 0);
 }

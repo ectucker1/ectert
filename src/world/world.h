@@ -1,9 +1,10 @@
 #pragma once
 
-#include "shapes/sphere.h"
+#include "shapes/shape.h"
 #include "light/point_light.h"
 #include "intersection/intersection.h"
 #include "intersection/hit.h"
+#include "light/background.h"
 #include <vector>
 #include <memory>
 
@@ -12,6 +13,7 @@ class World {
 public:
     std::vector<std::shared_ptr<Shape>> objects;
     std::vector<PointLight> lights;
+    std::shared_ptr<Background> background;
 
     World();
     static World example_world();

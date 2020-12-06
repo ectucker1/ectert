@@ -13,7 +13,7 @@ class Bounds;
 class Shape : public std::enable_shared_from_this<Shape> {
 
 public:
-    Material material;
+    std::shared_ptr<Material> material;
     std::shared_ptr<Group> parent;
 
     Shape();

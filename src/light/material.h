@@ -6,23 +6,18 @@
 #include "pattern/pattern.h"
 #include <memory>
 
-class Material {
+class Hit;
+class Scatter;
+
+class Material : public std::enable_shared_from_this<Material> {
 
 public:
-    std::shared_ptr<Pattern> pattern;
-    Color color;
-    float ambient;
-    float diffuse;
-    float specular;
-    float shininess;
-    float reflectivity;
-    float alpha;
     float ior;
 
     Material();
 
-    Color lighting(const std::shared_ptr<const Shape>& shape, const PointLight& light, const Tuple& position, const Tuple& eyev, const Tuple& normal, bool in_shadow) const;
+    virtual Scatter scatter(const Hit& hit) const = 0;
 
-    bool operator ==(const Material& other) const;
+    virtual bool operator ==(const Material& other) const;
 
 };

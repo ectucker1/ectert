@@ -4,8 +4,9 @@
 #include "shapes/triangle.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#include "light/material.h"
 
-std::shared_ptr<Shape> load_obj_group(std::string input) {
+std::shared_ptr<Shape> load_obj_group(std::string input, std::shared_ptr<Material> mat) {
     auto group = std::make_shared<Group>();
 
     // Results of loading. Will by filled by tinyobjloader.
@@ -53,6 +54,7 @@ std::shared_ptr<Shape> load_obj_group(std::string input) {
                 }
 
                 auto tri = std::make_shared<Triangle>(vertices[0], vertices[1], vertices[2], normals[0], normals[1], normals[2]);
+                tri->material = mat;
                 group->add_child(tri);
             }
 
