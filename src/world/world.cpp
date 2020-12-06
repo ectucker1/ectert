@@ -1,20 +1,17 @@
 #include "world.h"
 
 #include "math/transform.h"
-#include <cmath>
 #include "light/scatter.h"
 #include "shapes/sphere.h"
 #include "light/gradient_background.h"
 
-World::World() : lights(std::vector<PointLight>()), objects(std::vector<std::shared_ptr<Shape>>()) {
+World::World() {
+    objects = std::vector<std::shared_ptr<Shape>>();
     background = std::make_shared<GradientBackground>(Color(), Color());
 }
 
 World World::example_world() {
     World world = World();
-
-    PointLight light = PointLight(Tuple::point(-10, 10, -10), Color(1, 1, 1));
-    world.lights.push_back(light);
 
     auto s1 = std::make_shared<Sphere>();
     //s1->material.color = Color(0.8, 1.0, 0.6);
@@ -37,19 +34,6 @@ std::vector<Intersection> World::intersect(const Ray& ray) const {
     return sort_intersections(worldXS);
 }
 
-bool World::is_shadowed(const Tuple &point, const PointLight &light) const {
-    Tuple vec = light.position - point;
-
-    float dist = vec.magnitude_sq();
-    Tuple dir = vec.normalized();
-
-    Ray ray = Ray(point, dir);
-    std::vector<Intersection> xs = intersect(ray);
-    Intersection x = hit(xs);
-
-    return !(x == Intersection::NIL) && x.t * x.t < dist;
-}
-
 Color World::shade_hit(const Hit &hit, int remaining) const {
     // If there are no scatters remaining
     if (remaining <= 0) {
@@ -58,21 +42,15 @@ Color World::shade_hit(const Hit &hit, int remaining) const {
 
     std::shared_ptr<Material> mat = hit.object->material;
     Scatter scatter = mat->scatter(hit);
+    Color emitted = mat->emitted(hit);
 
     // If the light scattered
     if (!scatter.absorbed) {
-        return scatter.attenuation * color_at(scatter.scattered, remaining - 1);
+        return emitted + scatter.attenuation * color_at(scatter.scattered, remaining - 1);
+    } else {
+        // Return only the emitted part if light was absorbed
+        return emitted;
     }
-
-    // Return black if the light was absorbed
-    return Color(0, 0, 0);
-
-    // TODO reimplement lights
-    //for (PointLight light : lights) {
-    //    bool shadowed = is_shadowed(hit.over_point, light);
-    //    Color surface = mat.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
-    //    total = total + surface;
-    //}
 }
 
 Color World::color_at(const Ray &ray, int remaining) const {

@@ -2,7 +2,6 @@
 
 #include "math/color.h"
 #include "math/tuple.h"
-#include "light/point_light.h"
 #include "pattern/pattern.h"
 #include <memory>
 
@@ -17,6 +16,8 @@ public:
     Material();
 
     virtual Scatter scatter(const Hit& hit) const = 0;
+
+    virtual Color emitted(const Hit& hit) const;
 
     virtual bool operator ==(const Material& other) const;
 
