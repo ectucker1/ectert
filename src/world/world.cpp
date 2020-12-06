@@ -93,23 +93,6 @@ Color World::color_at(const Ray &ray, int remaining) const {
     return shade_hit(data, remaining);
 }
 
-Color World::reflected_color(const Hit& hit, int remaining) const {
-    // TODO reimplement reflections
-    /*
-    if (remaining < 1 || hit.object->material.reflectivity == 0) {
-        return Color(0, 0, 0);
-    }
-
-    remaining--;
-
-    Ray reflect_ray = Ray(hit.over_point, hit.reflectv);
-    Color color = color_at(reflect_ray, remaining);
-
-    return color * hit.object->material.reflectivity;
-     */
-    return Color(0, 0, 0);
-}
-
 Color World::refracted_color(const Hit& hit, int remaining) const {
     // TODO reimplement refraction
     /*

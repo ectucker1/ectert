@@ -26,7 +26,5 @@ public:
 
     Color color_at(const Ray& ray, int remaining) const;
 
-    Color reflected_color(const Hit& hit, int remaining) const;
-
     Color refracted_color(const Hit &hit, int remaining) const;
 };
