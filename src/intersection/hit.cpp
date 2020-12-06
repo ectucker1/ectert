@@ -21,11 +21,6 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
     // Point slightly inside object, used for refraction
     under_point = point - normalv * 0.01;
 
-    n1 = 1.0f;
-    n2 = 1.0f;
-
-    // TODO reimplement refraction
-    /*
     // Determine index of refraction being entered and left at this intersection
     auto containers = std::vector<std::shared_ptr<const Shape>>();
     for (const Intersection& x : xs) {
@@ -60,7 +55,6 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
             break;
         }
     }
-     */
 }
 
 float Hit::schlick_reflectance() const {

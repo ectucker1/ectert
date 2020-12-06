@@ -73,13 +73,6 @@ Color World::shade_hit(const Hit &hit, int remaining) const {
     //    Color surface = mat.lighting(hit.object, light, hit.point, hit.eyev, hit.normalv, shadowed);
     //    total = total + surface;
     //}
-
-    // TODO reimplement schlick reflectance
-    //// If material is both reflective and transparent
-    //if (mat.reflectivity > 0 && mat.alpha < 1) {
-    //    float reflectance = hit.schlick_reflectance();
-    //    return total + reflected * reflectance + refracted * (1 - reflectance);
-    //}
 }
 
 Color World::color_at(const Ray &ray, int remaining) const {
@@ -91,35 +84,4 @@ Color World::color_at(const Ray &ray, int remaining) const {
 
     Hit data = Hit(x, ray, xs);
     return shade_hit(data, remaining);
-}
-
-Color World::refracted_color(const Hit& hit, int remaining) const {
-    // TODO reimplement refraction
-    /*
-    // Default to black if object is not transparent or no recursive calls remaining
-    if (remaining < 1 || hit.object->material.alpha >= 1.0) {
-        return Color(0, 0, 0);
-    }
-
-    // Ratio of refractive indices
-    float n_ratio = hit.n1 / hit.n2;
-    // Dot product = cosine for normal vectors
-    float cos_i = hit.eyev.dot(hit.normalv);
-    // Trig identity stuff
-    float sin2_t = n_ratio * n_ratio * (1 - cos_i * cos_i);
-
-    // Total internal refraction
-    if (sin2_t > 1) {
-        return Color(0, 0, 0);
-    }
-
-    float cos_t = sqrtf(1 - sin2_t);
-    // Direction of refracted ray
-    Tuple direction = hit.normalv * (n_ratio * cos_i - cos_t) - hit.eyev * n_ratio;
-
-    Ray ray = Ray(hit.under_point, direction);
-
-    return color_at(ray, remaining - 1) * (1 - hit.object->material.alpha);
-    */
-    return Color(0, 0, 0);
 }

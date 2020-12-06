@@ -1,7 +1,7 @@
 ﻿#include "main.h"
-#include "demo/indirect_demo.h"
+#include "demo/random_spheres_demo.h"
 
 int main() {
-    run_indirect_demo();
+    run_random_spheres_demo();
 	return 0;
 }
