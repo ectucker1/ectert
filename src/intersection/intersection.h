@@ -15,7 +15,7 @@ public:
 
     static const Intersection NIL;
 
-    Intersection(float t, const std::shared_ptr<const Shape> object, float u = 0, float v = 0);
+    Intersection(float t, std::shared_ptr<const Shape> object, float u = 0, float v = 0);
 
     bool operator ==(const Intersection& other) const;
 
@@ -25,4 +25,4 @@ public:
 
 std::vector<Intersection> sort_intersections(std::vector<Intersection>& values);
 
-Intersection hit(std::vector<Intersection>& list);
+Intersection hit(const std::vector<Intersection>& list);

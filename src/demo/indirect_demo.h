@@ -12,6 +12,7 @@
 #include "light/metal_material.h"
 #include "light/dielectric_material.h"
 #include "light/emissive_material.h"
+#include <chrono>
 
 void run_indirect_demo() {
     World world = World();
@@ -36,10 +37,14 @@ void run_indirect_demo() {
     world.objects.push_back(right);
     world.objects.push_back(ground);
 
-    Camera cam = Camera(1024, 1024, M_PI / 3);
+    Camera cam = Camera(256, 256, M_PI / 3);
     cam.transform(view_transform(Tuple::point(-4, 4, -8), Tuple::point(0, 0, 0), Tuple::vector(0, 1, 0)));
 
-    Canvas canvas = RenderProcess(8).render(cam, world, 16);
+    auto start = std::chrono::high_resolution_clock::now();
+    Canvas canvas = RenderProcess(8).render(cam, world, 4);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::cout << duration.count() << std::endl;
 
     write_png(canvas, "test_emissive.png");
 }
