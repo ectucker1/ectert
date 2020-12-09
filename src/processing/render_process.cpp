@@ -47,7 +47,12 @@ void RenderProcess::render_next(Canvas& canvas, Camera& camera, const World& wor
                 total = total + world.color_at(ray, 5);
             }
         }
+
+        // Gamma correction
         total = total / (strata * strata);
+        total.r = sqrtf(total.r);
+        total.g = sqrtf(total.g);
+        total.b = sqrtf(total.b);
 
         // Save color to canvas
         canvas.write_pixel(x, y, total);

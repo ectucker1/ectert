@@ -78,7 +78,7 @@ Canvas Camera::render(const World& world) const {
     for (int x = 0; x < canvas.width; x++) {
         for (int y = 0; y < canvas.height; y++) {
             Ray ray = ray_to_pixel(x, y);
-            Color color = world.color_at(ray, 5);
+            Color color = world.color_at(ray, 50);
             canvas.write_pixel(x, y, color);
         }
     }

@@ -15,7 +15,7 @@ void write_png(const Canvas& canvas, const std::string& path) {
         for (int y = 0; y < height; y++) {
             Color color = canvas.get_pixel(x, y);
             pixels[stride * y + 3 * x + 0] = encode_color(color.r);
-            pixels[stride * y + 3 * x + 1] = encode_color(color.r);
+            pixels[stride * y + 3 * x + 1] = encode_color(color.g);
             pixels[stride * y + 3 * x + 2] = encode_color(color.b);
         }
     }

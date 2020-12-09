@@ -1,8 +1,14 @@
 #include "shape.h"
 #include "group.h"
+#include "light/lambertian_material.h"
 
-Shape::Shape() : _transform(Matrix::identity()), _inverse(_transform.inverse()) {}
-Shape::Shape(const Matrix& transform) : _transform(transform), _inverse(_transform.inverse()) {}
+Shape::Shape() : _transform(Matrix::identity()), _inverse(_transform.inverse()) {
+    material = std::make_shared<LambertianMaterial>();
+}
+
+Shape::Shape(const Matrix& transform) : _transform(transform), _inverse(_transform.inverse()) {
+    material = std::make_shared<LambertianMaterial>();
+}
 
 Matrix Shape::transform() const {
     return _transform;

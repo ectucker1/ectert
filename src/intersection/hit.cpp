@@ -30,7 +30,7 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
                 // Air default IOR
                 n1 = 1.0;
             } else {
-                n1 = containers.back()->material.ior;
+                n1 = containers.back()->material->ior;
             }
         }
 
@@ -48,7 +48,7 @@ Hit::Hit(const Intersection &intersection, const Ray &ray, const std::vector<Int
                 // Exiting into air
                 n2 = 1.0;
             } else {
-                n2 = containers.back()->material.ior;
+                n2 = containers.back()->material->ior;
             }
 
             // N2 found, no need to loop further

@@ -3,6 +3,7 @@
 #include "math/matrix.h"
 #include "math/transform.h"
 #include "world/world.h"
+#include "light/gradient_background.h"
 #include <cmath>
 
 TEST(CameraTest, ConstructingCamera) {
@@ -57,5 +58,5 @@ TEST(CameraTest, RenderingWorld) {
     c.transform(view_transform(Tuple::point(0, 0, -5), Tuple::point(0, 0, 0), Tuple::point(0, 1, 0)));
 
     Canvas canvas = c.render(world);
-    EXPECT_EQ(canvas.get_pixel(5, 5), Color(0.38066, 0.47583, 0.2855));
+    EXPECT_EQ(canvas.get_pixel(5, 5), Color(0.8, 1, 0.6));
 }

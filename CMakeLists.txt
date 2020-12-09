@@ -3,6 +3,9 @@ project (ectert)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-slp-vectorize")
+
 include_directories(src)
 include_directories(lib/tinyobjloader)
 include_directories(lib/stb)

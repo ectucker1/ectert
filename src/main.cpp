@@ -1,7 +1,7 @@
 ﻿#include "main.h"
-#include "demo/chapter_fifteen.h"
+#include "demo/indirect_demo.h"
 
 int main() {
-    run_chapter_fifteen();
+    run_indirect_demo();
 	return 0;
 }
