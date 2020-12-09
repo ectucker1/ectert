@@ -3,6 +3,8 @@
 #include "math/transform.h"
 #include "shapes/sphere.h"
 #include "shapes/group.h"
+#include "light/lambertian_material.h"
+#include "light/dielectric_material.h"
 #include <cmath>
 
 TEST(ShapeTest, DefaultTransform) {
@@ -51,16 +53,9 @@ TEST(ShapeTest, NormalTransformed) {
     EXPECT_EQ(shape.normal_at(Tuple::point(0.0f, M_SQRT2 / 2, -M_SQRT2 / 2)), Tuple::vector(0, 0.97014f, -0.24254f));
 }
 
-TEST(ShapeTest, DefaultMaterial) {
-    TestShape shape = TestShape();
-
-    EXPECT_EQ(shape.material, Material());
-}
-
 TEST(ShapeTest, AssignedMaterial) {
     TestShape shape = TestShape();
-    Material mat = Material();
-    mat.ambient = 1;
+    auto mat = std::make_shared<DielectricMaterial>(2.0);
     shape.material = mat;
 
     EXPECT_EQ(shape.material, mat);

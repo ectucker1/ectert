@@ -121,15 +121,15 @@ TEST(IntersectionTest, HitComputeReflection) {
 TEST(IntersectionTest, FindingMaterialN1N2) {
     auto a = test_glass_sphere();
     a->transform(scaling(2, 2, 2));
-    a->material.ior = 1.5;
+    a->material = std::make_shared<DielectricMaterial>(1.5);
 
     auto b = test_glass_sphere();
     b->transform(translation(0, 0, -0.25));
-    b->material.ior = 2.0;
+    b->material = std::make_shared<DielectricMaterial>(2.0);
 
     auto c = test_glass_sphere();
     c->transform(translation(0, 0, 0.25));
-    c->material.ior = 2.5;
+    c->material = std::make_shared<DielectricMaterial>(2.5);
 
     Ray ray = Ray(Tuple::point(0, 0, -4), Tuple::vector(0, 0, 1));
     auto xs = std::vector<Intersection>();

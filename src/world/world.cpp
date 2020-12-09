@@ -4,6 +4,7 @@
 #include "light/scatter.h"
 #include "shapes/sphere.h"
 #include "light/gradient_background.h"
+#include "light/lambertian_material.h"
 
 World::World() {
     objects = std::vector<std::shared_ptr<Shape>>();
@@ -14,13 +15,16 @@ World World::example_world() {
     World world = World();
 
     auto s1 = std::make_shared<Sphere>();
-    //s1->material.color = Color(0.8, 1.0, 0.6);
-    //s1->material.diffuse = 0.7;
-    //s1->material.specular = 0.2;
+    auto m1 = std::make_shared<LambertianMaterial>(Color(0.8, 1.0, 0.6));
+    s1->material = m1;
     world.objects.push_back(s1);
 
     auto s2 = std::make_shared<Sphere>(scaling(0.5, 0.5, 0.5));
+    auto m2 = std::make_shared<LambertianMaterial>(Color(1, 1, 1));
+    s2->material = m2;
     world.objects.push_back(s2);
+
+    world.background = std::make_shared<GradientBackground>(Color(1, 1, 1), Color(1, 1, 1));
 
     return world;
 }
