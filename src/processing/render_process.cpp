@@ -4,39 +4,34 @@
 #include "world/world.h"
 
 RenderProcess::RenderProcess(unsigned int thread_count) {
-    threads = std::vector<std::thread>(thread_count);
+    current = std::make_unique<std::atomic<int>>(0);
+    finished_threads = std::make_unique<std::atomic<int>>(0);
+    threads = std::vector<std::unique_ptr<std::thread>>(thread_count);
 }
 
-Canvas RenderProcess::render(Camera& camera, const World& world, int strata) {
+void RenderProcess::start_render(Camera& camera, const World& world, int strata) {
     // Create the canvas to render to
-    Canvas canvas = Canvas(camera.hsize, camera.vsize);
+    canvas = std::make_unique<Canvas>(camera.hsize, camera.vsize);
 
-    current = 0;
+    finished_threads->operator=(0);
+    current->operator=(0);
 
     // Start the threads
     for (int i = 0; i < threads.size(); i++) {
         // Must use std::ref and std::cref when passing to threads by reference
-        threads[i] = std::thread(&RenderProcess::render_next, this, std::ref(canvas),
-                                 std::ref(camera), std::cref(world), strata);
+        threads[i] = std::make_unique<std::thread>(&RenderProcess::render_next, this, std::ref(camera), std::cref(world), strata);
     }
-
-    // Wait for image to complete
-    for (auto& thread : threads) {
-        thread.join();
-    }
-
-    return canvas;
 }
 
-void RenderProcess::render_next(Canvas& canvas, Camera& camera, const World& world, int strata) {
+void RenderProcess::render_next(Camera& camera, const World& world, int strata) {
     // Get the next index to render and increment it for other threads
-    int next = current++;
+    int next = current->operator++();
 
     // Keep rendering until the image is finished
-    while (next < canvas.width * canvas.height) {
+    while (next < canvas->width * canvas->height) {
         // Convert index to x and y coordinates
-        int x = next % canvas.width;
-        int y = next / canvas.width;
+        int x = next % canvas->width;
+        int y = next / canvas->width;
 
         // Trace some rays
         // Stratified sampling, based on https://psgraphics.blogspot.com/2018/10/flavors-of-sampling-in-ray-tracing.html
@@ -55,9 +50,26 @@ void RenderProcess::render_next(Canvas& canvas, Camera& camera, const World& wor
         total.b = sqrtf(total.b);
 
         // Save color to canvas
-        canvas.write_pixel(x, y, total);
+        canvas->write_pixel(x, y, total);
 
         // Advance to next pixel
-        next = current++;
+        next = current->operator++();
+    }
+
+    // Add this to the number of finished threads
+    finished_threads->operator++();
+}
+
+float RenderProcess::percent_complete() const {
+    return (float) *current / (canvas->width * canvas->height);
+}
+
+bool RenderProcess::complete() const {
+    return *finished_threads >= threads.size();
+}
+
+void RenderProcess::clean_threads() {
+    for (int i = 0; i < threads.size(); i++) {
+        threads[i]->join();
     }
 }

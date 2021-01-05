@@ -11,14 +11,23 @@ class Canvas;
 class RenderProcess {
 
 private:
-    std::vector<std::thread> threads;
-    volatile std::atomic<int> current {0};
+    std::vector<std::unique_ptr<std::thread>> threads;
+    std::unique_ptr<std::atomic<int>> finished_threads;
 
-    void render_next(Canvas& canvas, Camera& camera, const World& world, int strata);
+    std::unique_ptr<std::atomic<int>> current;
+
+    void render_next(Camera& camera, const World& world, int strata);
 
 public:
+    std::unique_ptr<Canvas> canvas;
+
     explicit RenderProcess(unsigned int thread_count);
 
-    Canvas render(Camera& camera, const World& world, int strata);
+    void start_render(Camera& camera, const World& world, int strata);
+
+    float percent_complete() const;
+    bool complete() const;
+
+    void clean_threads();
 
 };

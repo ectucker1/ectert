@@ -1,10 +1,12 @@
 ﻿#include <iostream>
 #include <cmath>
+#include "world/camera.h"
+#include "processing/render_process.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl2.h"
 #include "GLFW/glfw3.h"
-#include "canvas.h"
+#include "main_scene.h"
 
 // Print any errors from IMGUI
 void error_callback(int error, const char* description) {
@@ -71,9 +73,15 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
-    // Create canvas to render to
-    Canvas canvas = Canvas(1920, 1080);
-    int texture = create_render_texture(canvas.width, canvas.height);
+    // Create a world and camera
+    auto render = create_main_render();
+
+    // Create canvas to preview the render
+    int texture = create_render_texture(render.second.hsize, render.second.vsize);
+
+    // Create a render process and start rendering
+    RenderProcess process = RenderProcess(8);
+    process.start_render(render.second, render.first, 8);
 
     // While the window hasn't been closed
     while (!glfwWindowShouldClose(window))
@@ -86,19 +94,17 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Write random data to the canvas
-        canvas.write_pixel(rand() % canvas.width, rand() % canvas.height, Color(1, 1, 1));
-
         // Reupload the image data
         glBindTexture(GL_TEXTURE_2D, texture);
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, canvas.width, canvas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, canvas.image());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, process.canvas->width, process.canvas->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, process.canvas->image());
 
         // Create demo window
         ImGui::ShowMetricsWindow();
         ImGui::Begin("Rendering Results");
-        ImGui::Text("size = %d x %d", canvas.width, canvas.height);
-        ImGui::Image((void*)(intptr_t)texture, ImVec2(canvas.width, canvas.height));
+        ImGui::Text("%0.2f%% complete", process.percent_complete() * 100);
+        ImGui::Text("size = %d x %d", process.canvas->width, process.canvas->height);
+        ImGui::Image((void*)(intptr_t)texture, ImVec2(process.canvas->width, process.canvas->height));
         ImGui::End();
 
         // Generate IMGUI
@@ -118,6 +124,9 @@ int main() {
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
+
+    // Clean up render process
+    process.clean_threads();
 
     // Shutdown IMGUI
     ImGui_ImplOpenGL2_Shutdown();
