@@ -4,10 +4,32 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl2.h"
 #include "GLFW/glfw3.h"
+#include "canvas.h"
 
 // Print any errors from IMGUI
 void error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
+}
+
+int create_render_texture(int width, int height) {
+    Canvas canvas = Canvas(width, height);
+
+    // Create a OpenGL texture identifier
+    GLuint render_texture;
+    glGenTextures(1, &render_texture);
+    glBindTexture(GL_TEXTURE_2D, render_texture);
+
+    // Setup filtering parameters for display
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    // Upload pixels into texture
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, canvas.image());
+
+    return render_texture;
 }
 
 int main() {
@@ -49,6 +71,10 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
+    // Create canvas to render to
+    Canvas canvas = Canvas(1920, 1080);
+    int texture = create_render_texture(canvas.width, canvas.height);
+
     // While the window hasn't been closed
     while (!glfwWindowShouldClose(window))
     {
@@ -60,8 +86,20 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        // Write random data to the canvas
+        canvas.write_pixel(rand() % canvas.width, rand() % canvas.height, Color(1, 1, 1));
+
+        // Reupload the image data
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, canvas.width, canvas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, canvas.image());
+
         // Create demo window
-        ImGui::ShowDemoWindow();
+        ImGui::ShowMetricsWindow();
+        ImGui::Begin("Rendering Results");
+        ImGui::Text("size = %d x %d", canvas.width, canvas.height);
+        ImGui::Image((void*)(intptr_t)texture, ImVec2(canvas.width, canvas.height));
+        ImGui::End();
 
         // Generate IMGUI
         ImGui::Render();

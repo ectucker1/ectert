@@ -6,8 +6,10 @@ class Canvas {
 
 private:
     Color* pixels;
+    unsigned char* image_data;
 
-    int index(int x, int y) const;
+    int index_pixel(int x, int y) const;
+    int index_image(int x, int y, int bit) const;
 
 public:
     int width, height;
@@ -17,5 +19,7 @@ public:
 
     void write_pixel(int x, int y, Color color);
     Color get_pixel(int x, int y) const;
+
+    unsigned char* image();
 
 };
