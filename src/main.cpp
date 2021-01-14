@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <cmath>
-#include "world/camera.h"
+#include "editor/editor_model.h"
 #include "processing/render_process.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -73,15 +73,17 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
-    // Create a world and camera
-    auto render = create_main_render();
+    // Create a render model, and run its world generation script
+    // TODO: Store and activate based on input
+    auto model = EditorModel();
+    model.start_render();
 
     // Create canvas to preview the render
-    int texture = create_render_texture(render.second.hsize, render.second.vsize);
+    int texture = create_render_texture(model.camera.hsize, model.camera.vsize);
 
     // Create a render process and start rendering
     RenderProcess process = RenderProcess(8);
-    process.start_render(render.second, render.first, 8);
+    process.start_render(model.camera, model.world, 4);
 
     // While the window hasn't been closed
     while (!glfwWindowShouldClose(window))

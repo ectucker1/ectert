@@ -1,5 +1,6 @@
-#include <random>
+#pragma once
 
+#include <random>
 #include "tuple.h"
 
 inline float random_float() {

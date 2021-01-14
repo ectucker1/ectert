@@ -20,7 +20,7 @@ public:
 
     Camera(int hsize, int vsize, float fov);
 
-    Matrix transform();
+    Matrix transform() const;
     void transform(const Matrix& trans);
 
     Matrix inverse();

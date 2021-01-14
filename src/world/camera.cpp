@@ -19,7 +19,7 @@ Camera::Camera(int hsize, int vsize, float fov) : hsize(hsize), vsize(vsize), fo
     pixel_size = (half_width * 2) / hsize;
 }
 
-Matrix Camera::transform() {
+Matrix Camera::transform() const {
     return _transform;
 }
 

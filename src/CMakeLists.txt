@@ -12,5 +12,5 @@ add_executable(${BINARY}_run ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
 
-target_link_libraries(ectert_lib PRIVATE ${OPENGL_LIBRARIES} Threads::Threads glfw)
-target_link_libraries(ectert_run PRIVATE ${OPENGL_LIBRARIES} Threads::Threads glfw)
+target_link_libraries(ectert_lib PRIVATE ${OPENGL_LIBRARIES} Threads::Threads glfw sol2 lua)
+target_link_libraries(ectert_run PRIVATE ${OPENGL_LIBRARIES} Threads::Threads glfw sol2 lua)
