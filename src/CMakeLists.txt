@@ -6,6 +6,7 @@ set(SOURCES ${SOURCES})
 
 # Probably the wrong way to do this, but it works
 aux_source_directory(../lib/imgui SOURCES)
+aux_source_directory(../lib/imgui/misc/cpp SOURCES)
 set(SOURCES ${SOURCES} ../lib/imgui/backends/imgui_impl_glfw.cpp ../lib/imgui/backends/imgui_impl_opengl2.cpp)
 
 add_executable(${BINARY}_run ${SOURCES})

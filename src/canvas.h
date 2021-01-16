@@ -20,6 +20,6 @@ public:
     void write_pixel(int x, int y, Color color);
     Color get_pixel(int x, int y) const;
 
-    unsigned char* image();
+    unsigned char* image() const;
 
 };

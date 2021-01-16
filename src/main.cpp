@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <cmath>
+#include "editor/editor_window.h"
 #include "editor/editor_model.h"
 #include "processing/render_process.h"
 #include "imgui.h"
@@ -11,27 +12,6 @@
 // Print any errors from IMGUI
 void error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
-}
-
-int create_render_texture(int width, int height) {
-    Canvas canvas = Canvas(width, height);
-
-    // Create a OpenGL texture identifier
-    GLuint render_texture;
-    glGenTextures(1, &render_texture);
-    glBindTexture(GL_TEXTURE_2D, render_texture);
-
-    // Setup filtering parameters for display
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    // Upload pixels into texture
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, canvas.image());
-
-    return render_texture;
 }
 
 int main() {
@@ -65,6 +45,8 @@ int main() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = nullptr;
 
     ImGui::StyleColorsDark();
     ImGui::GetStyle().ScaleAllSizes(scale);
@@ -73,17 +55,8 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
-    // Create a render model, and run its world generation script
-    // TODO: Store and activate based on input
-    auto model = EditorModel();
-    model.start_render();
-
-    // Create canvas to preview the render
-    int texture = create_render_texture(model.camera.hsize, model.camera.vsize);
-
-    // Create a render process and start rendering
-    RenderProcess process = RenderProcess(8);
-    process.start_render(model.camera, model.world, 4);
+    // Create the editor window
+    EditorWindow editor = EditorWindow();
 
     // While the window hasn't been closed
     while (!glfwWindowShouldClose(window))
@@ -96,20 +69,13 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Reupload the image data
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, process.canvas->width, process.canvas->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, process.canvas->image());
+        // Show demo window
+        //ImGui::ShowDemoWindow();
 
-        // Create demo window
-        ImGui::ShowMetricsWindow();
-        ImGui::Begin("Rendering Results");
-        ImGui::Text("%0.2f%% complete", process.percent_complete() * 100);
-        ImGui::Text("size = %d x %d", process.canvas->width, process.canvas->height);
-        ImGui::Image((void*)(intptr_t)texture, ImVec2(process.canvas->width, process.canvas->height));
-        ImGui::End();
+        // Render editor elements
+        editor.render_imgui();
 
-        // Generate IMGUI
+        // Generate IMGUI output
         ImGui::Render();
 
         // Resize viewport and clear screen
@@ -128,7 +94,7 @@ int main() {
     }
 
     // Clean up render process
-    process.clean_threads();
+    editor.cleanup();
 
     // Shutdown IMGUI
     ImGui_ImplOpenGL2_Shutdown();

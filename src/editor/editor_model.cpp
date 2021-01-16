@@ -1,24 +1,44 @@
 #include "editor_model.h"
+#include "processing/render_process.h"
+#include "editor/gl_util.h"
 
 EditorModel::EditorModel() : camera(0, 0, 0) {}
 
 void EditorModel::start_render() {
-    // TODO Get this script from the UI
-    const std::string script = R""(
-world = World.new()
+    // Try running the script, and forward errors to the UI
+    try {
+        auto results = scripting.run_script(script);
 
-test_sphere = make_sphere(scaling(15, 15, 15))
-test_sphere.material = make_lambertian(Color.new(1, 0, 0))
-world.objects:add(test_sphere)
+        world = results.first;
+        camera = results.second;
+    } catch (std::exception& e) {
+        script_output << e.what() << std::endl;
+        return;
+    }
 
-world.background = make_gradient_background(Color.new(0, 0, 1), Color.new(1, 1, 1))
+    // Scale rendering
+    camera.hsize(camera.hsize() * resolution);
+    camera.vsize(camera.vsize() * resolution);
 
-camera = Camera.new(256, 256, math.pi / 3)
-camera.transform = view_transform(Tuple.new(20, 20, 20, 1), Tuple.new(0, 0, 0, 1), Tuple.new(0, 1, 0, 0))
-    )"";
+    // Create a GL texture to render to
+    texture_id = create_render_texture(camera.hsize(), camera.vsize());
 
-    auto results = scripting.run_script(script);
+    // Start rendering
+    process = std::make_unique<RenderProcess>(std::thread::hardware_concurrency());
+    process->start_render(camera, world, strata);
 
-    world = results.first;
-    camera = results.second;
+    // Update flags
+    running = true;
+}
+
+void EditorModel::update() {
+    if (running) {
+        // If the rendering is finished,
+        if (process->complete()) {
+            // Update flags and clean up
+            finished = true;
+            running = false;
+            process->clean_threads();
+        }
+    }
 }

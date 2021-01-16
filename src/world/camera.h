@@ -10,18 +10,16 @@
 class Camera {
 
 public:
-    int hsize;
-    int vsize;
-    float fov;
-
-    float half_width;
-    float half_height;
-    float pixel_size;
-
     Camera(int hsize, int vsize, float fov);
 
     Matrix transform() const;
     void transform(const Matrix& trans);
+
+    int hsize() const;
+    void hsize(const float& hsize);
+
+    int vsize() const;
+    void vsize(const float& vsize);
 
     Matrix inverse();
 
@@ -31,10 +29,20 @@ public:
     Canvas render(const World& world) const;
 
 private:
+    int _hsize;
+    int _vsize;
+    float fov;
+
+    float half_width;
+    float half_height;
+    float pixel_size;
+
     Matrix _transform;
     Matrix _inverse;
 
     std::mt19937 _generator;
     std::uniform_real_distribution<float> _dist;
+
+    void recalc_dimens();
 
 };

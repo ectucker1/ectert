@@ -44,6 +44,6 @@ Color Canvas::get_pixel(int x, int y) const {
     return pixels[index_pixel(x, y)];
 }
 
-unsigned char *Canvas::image() {
+unsigned char *Canvas::image() const {
     return image_data;
 }

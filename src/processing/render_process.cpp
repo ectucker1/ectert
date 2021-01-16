@@ -11,7 +11,7 @@ RenderProcess::RenderProcess(unsigned int thread_count) {
 
 void RenderProcess::start_render(Camera& camera, const World& world, int strata) {
     // Create the canvas to render to
-    canvas = std::make_unique<Canvas>(camera.hsize, camera.vsize);
+    canvas = std::make_unique<Canvas>(camera.hsize(), camera.vsize());
 
     finished_threads->operator=(0);
     current->operator=(0);

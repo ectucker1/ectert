@@ -25,6 +25,7 @@ include_directories(lib/lua)
 add_subdirectory(lib/sol2)
 
 include_directories(lib/imgui)
+include_directories(lib/imgui/misc/cpp)
 
 include_directories(lib/tinyobjloader)
 include_directories(lib/stb)

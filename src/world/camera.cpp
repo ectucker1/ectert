@@ -1,12 +1,16 @@
 #include "camera.h"
 
-Camera::Camera(int hsize, int vsize, float fov) : hsize(hsize), vsize(vsize), fov(fov),
+Camera::Camera(int hsize, int vsize, float fov) : _hsize(hsize), _vsize(vsize), fov(fov),
                                                   _transform(Matrix::identity()), _inverse(Matrix::identity()) {
     _generator = std::mt19937();
     _dist = std::uniform_real_distribution<float>(0.0, 1.0);
 
+    recalc_dimens();
+}
+
+void Camera::recalc_dimens() {
     float half_view = tanf(fov / 2);
-    float aspect = (float) hsize / vsize;
+    float aspect = (float) _hsize / _vsize;
 
     if (aspect > 1) {
         half_width = half_view;
@@ -16,7 +20,25 @@ Camera::Camera(int hsize, int vsize, float fov) : hsize(hsize), vsize(vsize), fo
         half_height = half_view;
     }
 
-    pixel_size = (half_width * 2) / hsize;
+    pixel_size = (half_width * 2) / _hsize;
+}
+
+int Camera::hsize() const {
+    return _hsize;
+}
+
+void Camera::hsize(const float &hsize) {
+    _hsize = hsize;
+    recalc_dimens();
+}
+
+int Camera::vsize() const {
+    return _vsize;
+}
+
+void Camera::vsize(const float &vsize) {
+    _vsize = vsize;
+    recalc_dimens();
 }
 
 Matrix Camera::transform() const {
@@ -73,7 +95,7 @@ Ray Camera::ray_to_strata(int pixelX, int pixelY, int strataX, int strataY, int 
 }
 
 Canvas Camera::render(const World& world) const {
-    Canvas canvas = Canvas(hsize, vsize);
+    Canvas canvas = Canvas(_hsize, _vsize);
 
     for (int x = 0; x < canvas.width; x++) {
         for (int y = 0; y < canvas.height; y++) {
