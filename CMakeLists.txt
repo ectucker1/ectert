@@ -1,28 +1,14 @@
-﻿cmake_minimum_required(VERSION 3.10)
+﻿# Basic CMake config
+cmake_minimum_required(VERSION 3.11)
 project(ectert)
 
-set(CMAKE_CXX_STANDARD 17)
+# Set C++ version
+set(CMAKE_CXX_STANDARD 20)
 
+# Set manual compiler flags
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ftree-slp-vectorize")
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(lib/glfw)
-
-include_directories(lib/imgui)
-include_directories(lib/imgui/misc/cpp)
-
-include_directories(lib/stb)
-
-include_directories(src)
-
+# Add libraries and project source
+add_subdirectory(lib)
 add_subdirectory(src)

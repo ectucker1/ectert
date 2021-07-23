@@ -43,7 +43,6 @@ int main() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.IniFilename = nullptr;
 
     ImGui::StyleColorsDark();

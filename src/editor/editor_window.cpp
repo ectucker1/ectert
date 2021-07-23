@@ -1,7 +1,5 @@
 #include "editor_window.h"
 #include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui_internal.h"
 
 EditorWindow::EditorWindow() {}
 
