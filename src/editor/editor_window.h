@@ -12,7 +12,6 @@ public:
     ImGuiID dock_space;
 
     ImGuiTextFilter filter;
-    std::stringstream output;
 
     EditorWindow();
 

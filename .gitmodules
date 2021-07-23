@@ -1,10 +1,3 @@
-[submodule "lib/googletest"]
-	path = lib/googletest
-	url = https://github.com/google/googletest.git
-	branch = v1.10.x
-[submodule "lib/tinyobjloader"]
-	path = lib/tinyobjloader
-	url = https://github.com/tinyobjloader/tinyobjloader.git
 [submodule "lib/stb"]
 	path = lib/stb
 	url = https://github.com/nothings/stb.git
@@ -15,11 +8,3 @@
 	path = lib/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
-[submodule "lib/sol2"]
-	path = lib/sol2
-	url = https://github.com/ThePhD/sol2.git
-	branch = main
-[submodule "lib/lua"]
-	path = lib/lua
-	url = https://github.com/lua/lua.git
-	branch = v5.4.0

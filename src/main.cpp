@@ -2,12 +2,10 @@
 #include <cmath>
 #include "editor/editor_window.h"
 #include "editor/editor_model.h"
-#include "processing/render_process.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl2.h"
 #include "GLFW/glfw3.h"
-#include "main_scene.h"
 
 // Print any errors from IMGUI
 void error_callback(int error, const char* description) {

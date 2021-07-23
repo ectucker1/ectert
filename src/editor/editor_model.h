@@ -1,33 +1,15 @@
 #pragma once
 
-#include "world/world.h"
-#include "world/camera.h"
-#include "editor/scripting.h"
-
-class RenderProcess;
-
 class EditorModel {
 
 public:
-    std::unique_ptr<RenderProcess> process;
+    int width = 1920;
+    int height = 1080;
 
-    World world;
-    Camera camera;
-
-    std::string script;
-    Scripting scripting;
-    std::stringstream script_output;
-
-    float resolution = 1;
-    int strata = 8;
-
-    bool running = false;
-    bool finished = false;
-    int texture_id;
+    int samples = 8;
 
     EditorModel();
 
-    void start_render();
-    void update();
+    void render();
 
 };

@@ -18,22 +18,11 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(lib/glfw)
 
-aux_source_directory(lib/lua LUA_SOURCES)
-add_library(lua STATIC ${LUA_SOURCES})
-include_directories(lib/lua)
-
-add_subdirectory(lib/sol2)
-
 include_directories(lib/imgui)
 include_directories(lib/imgui/misc/cpp)
 
-include_directories(lib/tinyobjloader)
 include_directories(lib/stb)
 
 include_directories(src)
 
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_subdirectory(lib/googletest)
-
 add_subdirectory(src)
-add_subdirectory(test)
