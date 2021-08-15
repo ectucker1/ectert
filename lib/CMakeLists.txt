@@ -33,7 +33,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(${BINARY}_lib PUBLIC Threads::Threads)
 
-# Add OpenGL library
-find_package(OpenGL REQUIRED)
-target_include_directories(${BINARY}_lib PUBLIC ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(${BINARY}_lib PUBLIC ${OPENGL_LIBRARIES})
+# Add Vulkan library
+find_package(Vulkan REQUIRED)
+target_include_directories(${BINARY}_lib PUBLIC Vulkan::Vulkan)
+target_link_libraries(${BINARY}_lib PUBLIC Vulkan::Vulkan)
