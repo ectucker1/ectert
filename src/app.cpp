@@ -6,6 +6,8 @@
 #include <set>
 #include <algorithm>
 #include <fstream>
+#include "geom/vertex.h"
+#include "vkutil/vulkan_memory.h"
 
 #ifdef NDEBUG
     const bool enableValidationLayers = false;
@@ -22,6 +24,17 @@ const std::vector<const char*> deviceExtensions = {
 };
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
+
+const std::vector<Vertex> vertices {
+    {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+    {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+};
+
+const std::vector<uint16_t> indices = {
+        0, 1, 2, 2, 3, 0
+};
 
 void App::run() {
     initWindow();
@@ -51,7 +64,7 @@ void App::initWindow() {
     // GLFW would default to OpenGL if we didn't pass GLFW_NO_API
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    window = glfwCreateWindow(1280, 720, "Vulkan Tutorial", nullptr, nullptr);
+    window = glfwCreateWindow(1280, 720, "ECTERT Raytracer", nullptr, nullptr);
 
     // Connect to frame resize callback
     glfwSetWindowUserPointer(window, this);
@@ -75,6 +88,8 @@ void App::initVulkan() {
     createGraphicsPipeline();
     createFramebuffers();
     createCommandPool();
+    createVertexBuffer();
+    createIndexBuffer();
     createCommandBuffers();
     createSyncObjects();
 }
@@ -605,8 +620,8 @@ static VkShaderModule createShaderModule(const VkDevice& device, const std::vect
 
 void App::createGraphicsPipeline() {
     // Load shader code
-    auto vertShaderCode = readFile("shader/triangle.vert");
-    auto fragShaderCode = readFile("shader/triangle.frag");
+    auto vertShaderCode = readFile("shader/model.vert");
+    auto fragShaderCode = readFile("shader/model.frag");
 
     // Create shader modules
     VkShaderModule vertShaderModule = createShaderModule(device, vertShaderCode);
@@ -628,13 +643,15 @@ void App::createGraphicsPipeline() {
 
     VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
-    // No vertex input for now
+    // Vertex input based on our Vertex class
+    auto bindingDescription = Vertex::getBindingDescription();
+    auto attributeDescriptions = Vertex::getAttributeDescriptions();
     VkPipelineVertexInputStateCreateInfo vertexInputInfo {};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr;
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+    vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
     // Pipeline of just triangles
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -776,6 +793,51 @@ void App::createCommandPool() {
     }
 }
 
+void App::createVertexBuffer() {
+    VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+
+    // Create coherent staging buffer
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+    // Transfer data to staging buffer
+    void* data;
+    vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, vertices.data(), (size_t) bufferSize);
+    vkUnmapMemory(device, stagingBufferMemory);
+
+    // Create device local buffer
+    createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+
+    // Copy data from staging to final buffer
+    copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+
+    // Cleanup staging buffer
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
+void App::createIndexBuffer() {
+    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+    void* data;
+    vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, indices.data(), (size_t) bufferSize);
+    vkUnmapMemory(device, stagingBufferMemory);
+
+    createBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+
+    copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize);
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
 void App::createCommandBuffers() {
     commandBuffers.resize(swapChainFramebuffers.size());
 
@@ -821,8 +883,16 @@ void App::createCommandBuffers() {
         // Bind out graphics pipeline
         vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        // Draw three vertices!
-        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+        // Bind vertex buffers
+        VkBuffer vertexBuffers[] = {vertexBuffer};
+        VkDeviceSize offsets[] = {0};
+        vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+        // Bind index buffer
+        vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+        // Draw indices
+        vkCmdDrawIndexed(commandBuffers[i], indices.size(), 1, 0, 0, 0);
 
         // Finish the command buffer
         vkCmdEndRenderPass(commandBuffers[i]);
@@ -988,6 +1058,14 @@ void App::cleanupSwapChain() {
 
 void App::cleanup() {
     cleanupSwapChain();
+
+    // Destroy vertex buffer
+    vkDestroyBuffer(device, vertexBuffer, nullptr);
+    vkFreeMemory(device, vertexBufferMemory, nullptr);
+
+    // Destroy index buffer
+    vkDestroyBuffer(device, indexBuffer, nullptr);
+    vkFreeMemory(device, indexBufferMemory, nullptr);
 
     // Destroy semaphores
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
