@@ -64,6 +64,9 @@ private:
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;
     VkSampler textureSampler;
+    VkImage depthImage;
+    VkDeviceMemory depthImageMemory;
+    VkImageView depthImageView;
 
 public:
     void run();
@@ -83,6 +86,7 @@ private:
     void createGraphicsPipeline();
     void createFramebuffers();
     void createCommandPool();
+    void createDepthResources();
     void createTextureImage();
     void createTextureImageView();
     void createTextureSampler();
