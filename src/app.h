@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <vector>
+#include "geom/vertex.h"
 #include "GLFW/glfw3.h"
 
 class GLFWwindow;
@@ -52,6 +53,8 @@ private:
     std::vector<VkFence> inFlightFences;
     std::vector<VkFence> imagesInFlight;
     size_t currentFrame = 0;
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
     VkBuffer indexBuffer;
@@ -90,6 +93,7 @@ private:
     void createTextureImage();
     void createTextureImageView();
     void createTextureSampler();
+    void loadModel();
     void createVertexBuffer();
     void createIndexBuffer();
     void createUniformBuffers();

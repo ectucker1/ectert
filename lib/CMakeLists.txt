@@ -13,7 +13,6 @@ add_library(${BINARY}_lib STATIC ${SOURCES})
 # Add header library includes
 target_include_directories(${BINARY}_lib PUBLIC imgui)
 target_include_directories(${BINARY}_lib PUBLIC imgui/misc/cpp)
-target_include_directories(${BINARY}_lib PUBLIC stb)
 
 # Add GLFW library
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -27,6 +26,12 @@ target_link_libraries(${BINARY}_lib PUBLIC glfw)
 add_subdirectory(glm)
 target_link_libraries(${BINARY}_lib PUBLIC glm)
 target_include_directories(${BINARY}_lib PUBLIC glm/glm)
+
+# Add TinyGLTF library
+set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
+set(TINYGLTF_INSTALL OFF CACHE INTERNAL "" FORCE)
+set(TINYGLTF_USE_CPP14 ON CACHE INTERNAL "" FORCE)
+target_include_directories(${BINARY}_lib PUBLIC tinygltf)
 
 # Add Threads library
 set(THREADS_PREFER_PTHREAD_FLAG ON)

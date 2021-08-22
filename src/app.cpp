@@ -5,17 +5,11 @@
 #include <cstring>
 #include <set>
 #include <algorithm>
-#include <fstream>
 #include <chrono>
-#include "geom/vertex.h"
 #include "vkutil/vulkan_commands.h"
 #include "vkutil/vulkan_memory.h"
 #include "vkutil/uniforms.h"
-#define GLM_FORCE_RADIANS
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "files/gltf.h"
 
 #ifdef NDEBUG
     const bool enableValidationLayers = false;
@@ -32,23 +26,6 @@ const std::vector<const char*> deviceExtensions = {
 };
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
-
-const std::vector<Vertex> vertices {
-    {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-};
-
-const std::vector<uint16_t> indices = {
-    0, 1, 2, 2, 3, 0,
-    4, 5, 6, 6, 7, 4
-};
 
 void App::run() {
     initWindow();
@@ -107,6 +84,7 @@ void App::initVulkan() {
     createTextureImage();
     createTextureImageView();
     createTextureSampler();
+    loadModel();
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -1034,7 +1012,7 @@ static void copyBufferToImage(VkDevice device, VkCommandPool commandPool, VkQueu
 void App::createTextureImage() {
     // Load image file
     int texWidth, texHeight, texChannels;
-    stbi_uc* pixels = stbi_load("assets/textures/bricks.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels = stbi_load("assets/textures/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
     if (!pixels) {
         throw std::runtime_error("Failed to load texture image.");
@@ -1098,6 +1076,10 @@ void App::createTextureSampler() {
     if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create texture sampler.");
     }
+}
+
+void App::loadModel() {
+    loadGLTFModel("assets/models/viking_room.gltf", vertices, indices);
 }
 
 void App::createVertexBuffer() {
@@ -1278,7 +1260,7 @@ void App::createCommandBuffers() {
         vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
         // Bind index buffer
-        vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+        vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
         // Bind uniform buffer
         vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0,nullptr);
@@ -1365,7 +1347,7 @@ void App::updateUniformBuffer(uint32_t imageIndex) {
 
     UniformBufferObject ubo {};
     // Model = rotation around Z
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::half_pi<float>(), glm::vec3(0.0, 0.0, 1.0f));
+    ubo.model = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0, 0.0, 1.0f));
     // View = down from 45 degree angle
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     // Proj = perspective matrix
