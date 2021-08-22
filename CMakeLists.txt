@@ -12,3 +12,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ftree-slp-vectorize
 # Add libraries and project source
 add_subdirectory(lib)
 add_subdirectory(src)
+
+# Copy assets to build directory
+file(COPY assets DESTINATION src)
